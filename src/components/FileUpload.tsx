@@ -1,14 +1,36 @@
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { FileIcon } from "./FileIcon";
+
+type DroppedFile = {
+  file: File;
+  position: { x: number; y: number };
+};
 
 export const FileUpload: React.FC = () => {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log("Dropped files:", acceptedFiles);
-    // TODO: Handle file upload to Convex
-  }, []);
+  const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const onDrop = useCallback(
+    (acceptedFiles: File[], event: React.DragEvent) => {
+      const dropPosition = { x: event.pageX, y: event.pageY };
+
+      const newFiles = acceptedFiles.map((file, index) => ({
+        file,
+        position: {
+          x: dropPosition.x + index * 20, // Offset each file slightly
+          y: dropPosition.y + index * 20,
+        },
+      }));
+
+      setDroppedFiles((prev) => [...prev, ...newFiles]);
+    },
+    [],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (files, _, event) => onDrop(files, event as React.DragEvent),
+  });
 
   return (
     <div
@@ -51,6 +73,14 @@ export const FileUpload: React.FC = () => {
             : "Drag and drop files anywhere, or click to select"}
         </p>
       </div>
+
+      {droppedFiles.map((droppedFile, index) => (
+        <FileIcon
+          key={`${droppedFile.file.name}-${index}`}
+          file={droppedFile.file}
+          position={droppedFile.position}
+        />
+      ))}
     </div>
   );
 };
