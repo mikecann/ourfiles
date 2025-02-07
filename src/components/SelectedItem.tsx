@@ -1,5 +1,6 @@
 import * as React from "react";
 import { FileIcon } from "./FileIcon";
+import { FileTooltip } from "./FileTooltip";
 import type { DroppedFile } from "./FileUpload";
 
 type SelectedItemProps = {
@@ -71,6 +72,10 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           style={{ opacity: 0.5, pointerEvents: "none" }}
         />
       )}
+      <FileTooltip
+        file={droppedFile.file}
+        position={isDragging ? dragPosition : droppedFile.position}
+      />
     </>
   );
 };
