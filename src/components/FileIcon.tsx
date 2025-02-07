@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Doc } from "../../convex/_generated/dataModel";
+import { UploadStatusIndicator } from "./UploadStatusIndicator";
 
 type FileIconProps = {
   file: Doc<"files">;
@@ -38,32 +39,35 @@ export const FileIcon: React.FC<FileIconProps> = ({
       onDragEnd={isSelected ? onDragEnd : undefined}
     >
       {tooltip}
-      <div
-        className={`
-          w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center
-          transition-all duration-200
-          ${
-            isSelected
-              ? "bg-blue-50 border-blue-400 ring-2 ring-blue-400 ring-opacity-50"
-              : "bg-white hover:bg-gray-50"
-          }
-        `}
-        onClick={onClick}
-        onMouseDown={onMouseDown}
-      >
-        <svg
-          className={`w-6 h-6 ${isSelected ? "text-blue-400" : "text-gray-400"}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <div className="relative">
+        <div
+          className={`
+            w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center
+            transition-all duration-200
+            ${
+              isSelected
+                ? "bg-blue-50 border-blue-400 ring-2 ring-blue-400 ring-opacity-50"
+                : "bg-white hover:bg-gray-50"
+            }
+          `}
+          onClick={onClick}
+          onMouseDown={onMouseDown}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-          />
-        </svg>
+          <svg
+            className={`w-6 h-6 ${isSelected ? "text-blue-400" : "text-gray-400"}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
+        <UploadStatusIndicator file={file} />
       </div>
       <span
         className={`
