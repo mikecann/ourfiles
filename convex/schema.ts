@@ -10,6 +10,5 @@ export default defineSchema({
       x: v.number(),
       y: v.number(),
     }),
-    storageId: v.string(),
   }),
 });

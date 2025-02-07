@@ -19,11 +19,8 @@ export const create = mutation({
       x: v.number(),
       y: v.number(),
     }),
-    storageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const exists = await ctx.storage.getUrl(args.storageId);
-    if (!exists) throw new ConvexError("File not uploaded to storage");
     return await ctx.db.insert("files", args);
   },
 });
@@ -46,10 +43,6 @@ export const remove = mutation({
   handler: async (ctx, { id }) => {
     const file = await ctx.db.get(id);
     if (!file) throw new ConvexError("File not found");
-
-    // Delete from storage first
-    await ctx.storage.delete(file.storageId);
-    // Then remove from database
     await ctx.db.delete(id);
   },
 });
