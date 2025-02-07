@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button } from "./ui/button";
-import { Trash2, Upload, Check, Clock } from "lucide-react";
+import { Trash2, Upload, Check, Clock, Download } from "lucide-react";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useOptimisticRemoveFile } from "../hooks/useOptimisticFiles";
 import { DeleteFileDialog } from "./DeleteFileDialog";
@@ -16,6 +16,7 @@ type FileTooltipProps = {
 
 export const FileTooltip: React.FC<FileTooltipProps> = ({
   fileId,
+  name,
   size,
   type,
   onDelete,
@@ -28,6 +29,12 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
     void removeFile({ ids: [fileId] });
     setShowDeleteDialog(false);
     onDelete?.();
+  };
+
+  const handleDownload = () => {
+    if (uploadState.kind === "uploaded") {
+      window.open(uploadState.url, "_blank");
+    }
   };
 
   const getUploadStateDisplay = () => {
@@ -73,18 +80,26 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
               {getUploadStateDisplay()}
             </div>
             <div className="bg-gray-200 -mx-3 my-2" />
-            <div className="-mx-3 -mb-3 p-2 bg-gray-50 rounded-b-lg">
+            <div className="-mx-3 -mb-3 p-2 bg-gray-50 rounded-b-lg flex gap-2">
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="flex-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                onClick={handleDownload}
+                disabled={uploadState.kind !== "uploaded"}
+              >
+                <Download className="w-4 h-4 mr-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowDeleteDialog(true);
                 }}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete
               </Button>
             </div>
           </div>
