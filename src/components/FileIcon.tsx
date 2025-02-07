@@ -31,10 +31,10 @@ export const FileIcon: React.FC<FileIconProps> = ({
         top: position.y - 20,
         ...style,
       }}
-      draggable={!!onDragStart}
-      onDragStart={onDragStart}
-      onDrag={onDrag}
-      onDragEnd={onDragEnd}
+      draggable={isSelected ? !!onDragStart : false}
+      onDragStart={isSelected ? onDragStart : undefined}
+      onDrag={isSelected ? onDrag : undefined}
+      onDragEnd={isSelected ? onDragEnd : undefined}
     >
       <div
         className={`
