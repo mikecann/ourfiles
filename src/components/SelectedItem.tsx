@@ -63,6 +63,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
+        tooltip={<FileTooltip file={droppedFile.file} />}
       />
       {isDragging && (
         <FileIcon
@@ -70,12 +71,9 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           position={dragPosition}
           isSelected={true}
           style={{ opacity: 0.5, pointerEvents: "none" }}
+          tooltip={<FileTooltip file={droppedFile.file} />}
         />
       )}
-      <FileTooltip
-        file={droppedFile.file}
-        position={isDragging ? dragPosition : droppedFile.position}
-      />
     </>
   );
 };

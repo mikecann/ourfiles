@@ -2,19 +2,12 @@ import * as React from "react";
 
 type FileTooltipProps = {
   file: File;
-  position: { x: number; y: number };
 };
 
-export const FileTooltip: React.FC<FileTooltipProps> = ({ file, position }) => {
+export const FileTooltip: React.FC<FileTooltipProps> = ({ file }) => {
   return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        left: position.x,
-        top: position.y - 80, // Position above the file icon
-      }}
-    >
-      <div className="bg-white rounded-lg shadow-lg p-3 border text-sm">
+    <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-none flex flex-col items-center">
+      <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[200px]">
         <div className="flex flex-col gap-1">
           <div className="text-gray-600">
             Size: {(file.size / 1024).toFixed(1)} KB
@@ -24,7 +17,7 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({ file, position }) => {
       </div>
       {/* Triangle pointer */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-0"
+        className="w-0 h-0"
         style={{
           borderLeft: "8px solid transparent",
           borderRight: "8px solid transparent",
