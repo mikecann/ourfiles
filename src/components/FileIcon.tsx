@@ -6,6 +6,9 @@ type FileIconProps = {
   isSelected: boolean;
   onClick?: (e: React.MouseEvent) => void;
   style?: React.CSSProperties;
+  onDragStart?: (e: React.DragEvent) => void;
+  onDrag?: (e: React.DragEvent) => void;
+  onDragEnd?: (e: React.DragEvent) => void;
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
@@ -14,6 +17,9 @@ export const FileIcon: React.FC<FileIconProps> = ({
   isSelected,
   onClick,
   style,
+  onDragStart,
+  onDrag,
+  onDragEnd,
 }) => {
   return (
     <div
@@ -23,6 +29,10 @@ export const FileIcon: React.FC<FileIconProps> = ({
         top: position.y - 20,
         ...style,
       }}
+      draggable={!!onDragStart}
+      onDragStart={onDragStart}
+      onDrag={onDrag}
+      onDragEnd={onDragEnd}
     >
       <div
         className={`

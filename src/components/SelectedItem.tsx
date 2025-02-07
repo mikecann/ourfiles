@@ -43,7 +43,9 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         position={droppedFile.position}
         isSelected={true}
         onClick={onClick}
-        style={{ pointerEvents: "auto" }}
+        onDragStart={handleDragStart}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
       />
       {isDragging && (
         <FileIcon
@@ -53,20 +55,6 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           style={{ opacity: 0.5, pointerEvents: "none" }}
         />
       )}
-      <div
-        className="absolute"
-        style={{
-          left: droppedFile.position.x - 20,
-          top: droppedFile.position.y - 20,
-          width: "40px",
-          height: "40px",
-          cursor: "move",
-        }}
-        draggable
-        onDragStart={handleDragStart}
-        onDrag={handleDrag}
-        onDragEnd={handleDragEnd}
-      />
     </>
   );
 };
