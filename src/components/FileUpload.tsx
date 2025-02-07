@@ -15,22 +15,20 @@ export type DroppedFile = {
 
 export const FileUpload: React.FC = () => {
   const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
-  const [selectedFileIndex, setSelectedFileIndex] = useState<number | null>(
-    null,
-  );
+  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const hasFiles = droppedFiles.length > 0;
 
   const unselectedFiles = droppedFiles.filter(
-    (_, index) => index !== selectedFileIndex,
+    (file) => file.id !== selectedFileId,
   );
 
   const onDrop = useCallback(
     (acceptedFiles: File[], event: React.DragEvent) => {
       const dropPosition = { x: event.pageX, y: event.pageY };
-      setSelectedFileIndex(null);
+      setSelectedFileId(null);
 
       const newFiles = acceptedFiles.map((file, index) => ({
         id: crypto.randomUUID(),
@@ -52,12 +50,12 @@ export const FileUpload: React.FC = () => {
   });
 
   const handleContainerClick = (e: React.MouseEvent) => {
-    if (e.target === containerRef.current) setSelectedFileIndex(null);
+    if (e.target === containerRef.current) setSelectedFileId(null);
   };
 
-  const handleFileClick = (index: number, e: React.MouseEvent) => {
+  const handleFileClick = (fileId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedFileIndex(index === selectedFileIndex ? null : index);
+    setSelectedFileId(fileId === selectedFileId ? null : fileId);
   };
 
   const handleSelectFilesClick = () => {
@@ -107,17 +105,17 @@ export const FileUpload: React.FC = () => {
         <UnselectedItem
           key={droppedFile.id}
           droppedFile={droppedFile}
-          onClick={(e) => handleFileClick(droppedFiles.indexOf(droppedFile), e)}
+          onClick={(e) => handleFileClick(droppedFile.id, e)}
         />
       ))}
 
-      {selectedFileIndex !== null && (
+      {selectedFileId && (
         <SelectedItem
-          droppedFile={droppedFiles[selectedFileIndex]}
+          droppedFile={droppedFiles.find((file) => file.id === selectedFileId)!}
           onDragEnd={(newPosition) => {
             setDroppedFiles((prev) =>
-              prev.map((file, index) =>
-                index === selectedFileIndex
+              prev.map((file) =>
+                file.id === selectedFileId
                   ? { ...file, position: newPosition }
                   : file,
               ),
