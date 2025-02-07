@@ -9,23 +9,15 @@ import { EmptyState } from "./EmptyState";
 import { SelectionBox } from "./SelectionBox";
 import { Id } from "../../convex/_generated/dataModel";
 import {
-  useOptimisticCreateFile,
   useOptimisticUpdateFilePosition,
   useOptimisticUpdateFilePositions,
   useOptimisticRemoveFile,
 } from "../hooks/useOptimisticFiles";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import { DeleteFileDialog } from "./DeleteFileDialog";
 import { Toaster } from "./ui/toast";
+import { useFileCreator } from "../hooks/useFileCreator";
 
 export const FileUpload: React.FC = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<Set<Id<"files">>>(
@@ -39,14 +31,9 @@ export const FileUpload: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const files = useQuery(api.files.list) ?? [];
-  const createFile = useOptimisticCreateFile();
-  const updateFilePosition = useOptimisticUpdateFilePosition();
   const updateFilePositions = useOptimisticUpdateFilePositions();
   const removeFile = useOptimisticRemoveFile();
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
-  const startUpload = useMutation(api.files.startUpload);
-  const updateUploadProgress = useMutation(api.files.updateUploadProgress);
-  const completeUpload = useMutation(api.files.completeUpload);
+  const { createAndUploadFiles } = useFileCreator();
 
   const hasFiles = files.length > 0;
 
@@ -55,79 +42,17 @@ export const FileUpload: React.FC = () => {
   );
   const selectedFiles = files.filter((file) => selectedFileIds.has(file._id));
 
-  const handleFileUpload = async (file: File, fileId: Id<"files">) => {
-    try {
-      // First mark the file as uploading
-      await startUpload({ id: fileId });
-
-      // Then generate upload URL and upload the file
-      const uploadUrl = await generateUploadUrl();
-
-      // Create a promise that resolves when the upload is complete
-      await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", uploadUrl);
-        xhr.setRequestHeader("Content-Type", file.type);
-
-        let lastUpdate = 0;
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const now = Date.now();
-            if (now - lastUpdate >= 1000) {
-              const progress = Math.round((event.loaded / event.total) * 100);
-              void updateUploadProgress({ id: fileId, progress });
-              lastUpdate = now;
-            }
-          }
-        };
-
-        xhr.onload = async () => {
-          if (xhr.status === 200) {
-            const { storageId } = JSON.parse(xhr.responseText);
-            await completeUpload({ id: fileId, storageId });
-            resolve(undefined);
-          } else {
-            reject(new Error(`Upload failed with status ${xhr.status}`));
-          }
-        };
-
-        xhr.onerror = () => reject(new Error("Upload failed"));
-        xhr.send(file);
-      });
-    } catch (error) {
-      console.error("Upload failed:", error);
-    }
-  };
-
   const onDrop = useCallback(
     async (acceptedFiles: File[], event: React.DragEvent) => {
       const dropPosition = { x: event.pageX, y: event.pageY };
       setSelectedFileIds(new Set());
 
-      const fileInfos = acceptedFiles.map((file, index) => ({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        position: {
-          x: dropPosition.x + index * 20,
-          y: dropPosition.y + index * 20,
-        },
+      await createAndUploadFiles(acceptedFiles, (index) => ({
+        x: dropPosition.x + index * 20,
+        y: dropPosition.y + index * 20,
       }));
-
-      const fileIds = await createFile({ files: fileInfos });
-
-      // Start uploads for each file
-      for (let i = 0; i < acceptedFiles.length; i++) {
-        handleFileUpload(acceptedFiles[i], fileIds[i]);
-      }
     },
-    [
-      createFile,
-      generateUploadUrl,
-      startUpload,
-      updateUploadProgress,
-      completeUpload,
-    ],
+    [createAndUploadFiles],
   );
 
   const { getRootProps, isDragActive } = useDropzone({
@@ -202,22 +127,10 @@ export const FileUpload: React.FC = () => {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
-    const fileInfos = files.map((file, index) => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      position: {
-        x: centerX + index * 20,
-        y: centerY + index * 20,
-      },
+    await createAndUploadFiles(files, (index) => ({
+      x: centerX + index * 20,
+      y: centerY + index * 20,
     }));
-
-    const fileIds = await createFile({ files: fileInfos });
-
-    // Start uploads for each file
-    for (let i = 0; i < files.length; i++) {
-      handleFileUpload(files[i], fileIds[i]);
-    }
 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
