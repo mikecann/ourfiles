@@ -67,10 +67,25 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "popIn": {
+          "0%": { 
+            opacity: "0",
+            transform: "translate(-50%, -100%) scale(0.95)"
+          },
+          "50%": {
+            opacity: "1",
+            transform: "translate(-50%, -100%) scale(1.05)"
+          },
+          "100%": { 
+            opacity: "1",
+            transform: "translate(-50%, -100%) scale(1)"
+          }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "popIn": "popIn 200ms cubic-bezier(.17,.67,.39,1.32)"
       },
     },
   },
