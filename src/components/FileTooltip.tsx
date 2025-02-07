@@ -32,23 +32,29 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
     <>
       <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-auto flex flex-col items-center animate-popIn">
         <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[200px]">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
+            <div className="text-xs font-medium text-gray-500 mb-1">
+              PROPERTIES
+            </div>
             <div className="text-gray-600">
               Size: {(size / 1024).toFixed(1)} KB
             </div>
             <div className="text-gray-600">Type: {type || "Unknown"}</div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full mt-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDeleteDialog(true);
-              }}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </Button>
+            <div className=" bg-gray-200 -mx-3 my-2" />
+            <div className="-mx-3 -mb-3 p-2 bg-gray-50 rounded-b-lg">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDeleteDialog(true);
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </div>
           </div>
         </div>
         {/* Triangle pointer */}
