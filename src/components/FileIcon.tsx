@@ -12,6 +12,7 @@ type FileIconProps = {
   onDrag?: (e: React.DragEvent) => void;
   onDragEnd?: (e: React.DragEvent) => void;
   tooltip?: React.ReactNode;
+  draggable?: boolean;
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
@@ -24,6 +25,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
   onDrag,
   onDragEnd,
   tooltip,
+  draggable,
 }) => {
   return (
     <div
@@ -33,10 +35,10 @@ export const FileIcon: React.FC<FileIconProps> = ({
         top: file.position.y - 20,
         ...style,
       }}
-      draggable={isSelected ? !!onDragStart : false}
-      onDragStart={isSelected ? onDragStart : undefined}
-      onDrag={isSelected ? onDrag : undefined}
-      onDragEnd={isSelected ? onDragEnd : undefined}
+      draggable={draggable ?? (isSelected ? !!onDragStart : false)}
+      onDragStart={onDragStart}
+      onDrag={onDrag}
+      onDragEnd={onDragEnd}
     >
       {tooltip}
       <div className="relative">
