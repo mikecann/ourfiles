@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Doc } from "../../convex/_generated/dataModel";
 import { UploadStatusIndicator } from "./UploadStatusIndicator";
+import { FileTypeIcon } from "./FileTypeIcon";
 
 type FileIconProps = {
   file: Doc<"files">;
@@ -35,7 +36,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
         top: file.position.y - 20,
         ...style,
       }}
-      draggable={draggable ?? (isSelected ? !!onDragStart : false)}
+      draggable={draggable}
       onDragStart={onDragStart}
       onDrag={onDrag}
       onDragEnd={onDragEnd}
@@ -55,19 +56,10 @@ export const FileIcon: React.FC<FileIconProps> = ({
           onClick={onClick}
           onMouseDown={onMouseDown}
         >
-          <svg
-            className={`w-6 h-6 ${isSelected ? "text-blue-400" : "text-gray-400"}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-            />
-          </svg>
+          <FileTypeIcon
+            type={file.type}
+            className={isSelected ? "text-blue-400" : "text-gray-300"}
+          />
         </div>
         <UploadStatusIndicator file={file} />
       </div>
