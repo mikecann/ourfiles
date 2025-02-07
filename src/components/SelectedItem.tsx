@@ -149,6 +149,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
               size={file.size}
               type={file.type}
               onDelete={onDelete}
+              uploadState={file.uploadState}
             />
           ) : undefined
         }

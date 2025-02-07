@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button } from "./ui/button";
-import { Trash2 } from "lucide-react";
-import { Id } from "../../convex/_generated/dataModel";
+import { Trash2, Upload, Check, Clock } from "lucide-react";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useOptimisticRemoveFile } from "../hooks/useOptimisticFiles";
 import { DeleteFileDialog } from "./DeleteFileDialog";
 
@@ -11,6 +11,7 @@ type FileTooltipProps = {
   size: number;
   type: string;
   onDelete?: () => void;
+  uploadState: Doc<"files">["uploadState"];
 };
 
 export const FileTooltip: React.FC<FileTooltipProps> = ({
@@ -18,14 +19,41 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
   size,
   type,
   onDelete,
+  uploadState,
 }) => {
   const removeFile = useOptimisticRemoveFile();
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
   const handleDelete = () => {
-    removeFile({ ids: [fileId] });
+    void removeFile({ ids: [fileId] });
     setShowDeleteDialog(false);
     onDelete?.();
+  };
+
+  const getUploadStateDisplay = () => {
+    switch (uploadState.kind) {
+      case "created":
+        return (
+          <div className="flex items-center gap-1 text-gray-500">
+            <Clock className="w-3 h-3" />
+            Waiting
+          </div>
+        );
+      case "uploading":
+        return (
+          <div className="flex items-center gap-1 text-blue-500">
+            <Upload className="w-3 h-3" />
+            {uploadState.progress}%
+          </div>
+        );
+      case "uploaded":
+        return (
+          <div className="flex items-center gap-1 text-green-500">
+            <Check className="w-3 h-3" />
+            Uploaded
+          </div>
+        );
+    }
   };
 
   return (
@@ -40,7 +68,11 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
               Size: {(size / 1024).toFixed(1)} KB
             </div>
             <div className="text-gray-600">Type: {type || "Unknown"}</div>
-            <div className=" bg-gray-200 -mx-3 my-2" />
+            <div className="flex items-center gap-2 text-gray-600">
+              <span>State:</span>
+              {getUploadStateDisplay()}
+            </div>
+            <div className="bg-gray-200 -mx-3 my-2" />
             <div className="-mx-3 -mb-3 p-2 bg-gray-50 rounded-b-lg">
               <Button
                 variant="ghost"
