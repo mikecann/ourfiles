@@ -19,21 +19,30 @@ export const generateUploadUrl = mutation({
 
 export const create = mutation({
   args: {
-    name: v.string(),
-    size: v.number(),
-    type: v.string(),
-    position: v.object({
-      x: v.number(),
-      y: v.number(),
-    }),
+    files: v.array(
+      v.object({
+        name: v.string(),
+        size: v.number(),
+        type: v.string(),
+        position: v.object({
+          x: v.number(),
+          y: v.number(),
+        }),
+      }),
+    ),
   },
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("files", {
-      ...args,
-      uploadState: {
-        kind: "created",
-      },
-    });
+  handler: async (ctx, { files }) => {
+    const fileIds = [];
+    for (const file of files) {
+      const id = await ctx.db.insert("files", {
+        ...file,
+        uploadState: {
+          kind: "created",
+        },
+      });
+      fileIds.push(id);
+    }
+    return fileIds;
   },
 });
 

@@ -78,18 +78,21 @@ export const FileUpload: React.FC = () => {
       const dropPosition = { x: event.pageX, y: event.pageY };
       setSelectedFileIds(new Set());
 
-      for (const [index, file] of acceptedFiles.entries()) {
-        const fileId = await createFile({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          position: {
-            x: dropPosition.x + index * 20,
-            y: dropPosition.y + index * 20,
-          },
-        });
+      const fileInfos = acceptedFiles.map((file, index) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        position: {
+          x: dropPosition.x + index * 20,
+          y: dropPosition.y + index * 20,
+        },
+      }));
 
-        handleFileUpload(file, fileId);
+      const fileIds = await createFile({ files: fileInfos });
+
+      // Start uploads for each file
+      for (let i = 0; i < acceptedFiles.length; i++) {
+        handleFileUpload(acceptedFiles[i], fileIds[i]);
       }
     },
     [
@@ -173,18 +176,21 @@ export const FileUpload: React.FC = () => {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
-    for (const [index, file] of files.entries()) {
-      const fileId = await createFile({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        position: {
-          x: centerX + index * 20,
-          y: centerY + index * 20,
-        },
-      });
+    const fileInfos = files.map((file, index) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      position: {
+        x: centerX + index * 20,
+        y: centerY + index * 20,
+      },
+    }));
 
-      handleFileUpload(file, fileId);
+    const fileIds = await createFile({ files: fileInfos });
+
+    // Start uploads for each file
+    for (let i = 0; i < files.length; i++) {
+      handleFileUpload(files[i], fileIds[i]);
     }
 
     if (fileInputRef.current) fileInputRef.current.value = "";
