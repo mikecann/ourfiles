@@ -1,14 +1,16 @@
 import * as React from "react";
 import { FileIcon } from "./FileIcon";
 import { FileTooltip } from "./FileTooltip";
-import { Doc } from "../../convex/_generated/dataModel";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useFileDownloadDrag } from "../hooks/useFileDownloadDrag";
 import { MultiFileDownloadDialog } from "./MultiFileDownloadDialog";
 
 type SelectedItemProps = {
   file: Doc<"files">;
   allSelectedFiles: Doc<"files">[];
-  onDragEnd: (newPosition: { x: number; y: number }) => void;
+  onDragEnd: (
+    updates: { id: Id<"files">; position: { x: number; y: number } }[],
+  ) => void;
   onDelete?: () => void;
   onClick: (e: React.MouseEvent) => void;
   disableTooltip?: boolean;
@@ -39,6 +41,20 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     singleFile: allSelectedFiles.length === 1,
   });
 
+  // Calculate relative positions of all files to the dragged file
+  const relativePositions = React.useMemo(() => {
+    if (allSelectedFiles.length <= 1) return [];
+    const baseX = file.position.x;
+    const baseY = file.position.y;
+    return allSelectedFiles
+      .filter((f) => f._id !== file._id)
+      .map((f) => ({
+        id: f._id,
+        offsetX: f.position.x - baseX,
+        offsetY: f.position.y - baseY,
+      }));
+  }, [allSelectedFiles, file]);
+
   const handleDragStart = (e: React.DragEvent) => {
     if (!canDownload) return;
     setIsInternalDragging(true);
@@ -48,10 +64,11 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     const offsetY = e.clientY - rect.top;
     setMouseOffset({ x: offsetX, y: offsetY });
 
-    setDragPosition({
+    const newPosition = {
       x: e.clientX - offsetX + 20,
       y: e.clientY - offsetY + 20,
-    });
+    };
+    setDragPosition(newPosition);
 
     // Handle external drag and drop
     handleExternalDragStart(e);
@@ -66,10 +83,11 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   const handleDrag = (e: React.DragEvent) => {
     if (!e.clientX || !e.clientY) return;
 
-    setDragPosition({
+    const newPosition = {
       x: e.clientX - mouseOffset.x + 20,
       y: e.clientY - mouseOffset.y + 20,
-    });
+    };
+    setDragPosition(newPosition);
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
@@ -81,11 +99,26 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
       e.clientY > 0 &&
       e.clientX < window.innerWidth &&
       e.clientY < window.innerHeight
-    )
-      onDragEnd({
+    ) {
+      const newPosition = {
         x: e.clientX - mouseOffset.x + 20,
         y: e.clientY - mouseOffset.y + 20,
-      });
+      };
+
+      // Create updates for all selected files
+      const updates: { id: Id<"files">; position: { x: number; y: number } }[] =
+        [
+          { id: file._id, position: newPosition },
+          ...relativePositions.map(({ id, offsetX, offsetY }) => ({
+            id,
+            position: {
+              x: newPosition.x + offsetX,
+              y: newPosition.y + offsetY,
+            },
+          })),
+        ];
+      onDragEnd(updates);
+    }
   };
 
   return (
@@ -112,14 +145,34 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         }
       />
       {isInternalDragging && (
-        <FileIcon
-          file={{
-            ...file,
-            position: dragPosition,
-          }}
-          isSelected={true}
-          style={{ opacity: 0.5, pointerEvents: "none" }}
-        />
+        <>
+          <FileIcon
+            file={{
+              ...file,
+              position: dragPosition,
+            }}
+            isSelected={true}
+            style={{ opacity: 0.5, pointerEvents: "none" }}
+          />
+          {relativePositions.map(({ id, offsetX, offsetY }) => {
+            const relativeFile = allSelectedFiles.find((f) => f._id === id);
+            if (!relativeFile) return null;
+            return (
+              <FileIcon
+                key={id}
+                file={{
+                  ...relativeFile,
+                  position: {
+                    x: dragPosition.x + offsetX,
+                    y: dragPosition.y + offsetY,
+                  },
+                }}
+                isSelected={true}
+                style={{ opacity: 0.5, pointerEvents: "none" }}
+              />
+            );
+          })}
+        </>
       )}
 
       <MultiFileDownloadDialog

@@ -149,3 +149,22 @@ export const getDownloadUrl = query({
     return urls;
   },
 });
+
+export const updatePositions = mutation({
+  args: {
+    updates: v.array(
+      v.object({
+        id: v.id("files"),
+        position: v.object({
+          x: v.number(),
+          y: v.number(),
+        }),
+      }),
+    ),
+  },
+  handler: async (ctx, { updates }) => {
+    await Promise.all(
+      updates.map(({ id, position }) => ctx.db.patch(id, { position })),
+    );
+  },
+});

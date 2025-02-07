@@ -11,6 +11,7 @@ import { Id } from "../../convex/_generated/dataModel";
 import {
   useOptimisticCreateFile,
   useOptimisticUpdateFilePosition,
+  useOptimisticUpdateFilePositions,
   useOptimisticRemoveFile,
 } from "../hooks/useOptimisticFiles";
 import { useQuery, useMutation } from "convex/react";
@@ -40,6 +41,7 @@ export const FileUpload: React.FC = () => {
   const files = useQuery(api.files.list) ?? [];
   const createFile = useOptimisticCreateFile();
   const updateFilePosition = useOptimisticUpdateFilePosition();
+  const updateFilePositions = useOptimisticUpdateFilePositions();
   const removeFile = useOptimisticRemoveFile();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const startUpload = useMutation(api.files.startUpload);
@@ -254,11 +256,8 @@ export const FileUpload: React.FC = () => {
             key={file._id}
             file={file}
             allSelectedFiles={selectedFiles}
-            onDragEnd={(newPosition) => {
-              updateFilePosition({
-                id: file._id,
-                position: newPosition,
-              });
+            onDragEnd={(updates) => {
+              updateFilePositions({ updates });
             }}
             onDelete={() => setSelectedFileIds(new Set())}
             onClick={(e) => handleFileClick(file._id, e)}

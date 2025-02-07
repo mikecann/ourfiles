@@ -53,6 +53,21 @@ export function useOptimisticRemoveFile() {
   );
 }
 
+export function useOptimisticUpdateFilePositions() {
+  return useMutation(api.files.updatePositions).withOptimisticUpdate(
+    (localStore, args) => {
+      const existingFiles = localStore.getQuery(api.files.list, {});
+      if (existingFiles === undefined) return;
+
+      const updatedFiles = existingFiles.map((file) => {
+        const update = args.updates.find((u) => u.id === file._id);
+        return update ? { ...file, position: update.position } : file;
+      });
+      localStore.setQuery(api.files.list, {}, updatedFiles);
+    },
+  );
+}
+
 export function useFiles() {
   return useQuery(api.files.list) ?? [];
 }
