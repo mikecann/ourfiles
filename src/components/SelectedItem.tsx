@@ -57,8 +57,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   return (
     <>
       <FileIcon
-        name={file.name}
-        position={file.position}
+        file={file}
         isSelected={true}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
@@ -76,8 +75,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
       />
       {isDragging && (
         <FileIcon
-          name={file.name}
-          position={dragPosition}
+          file={file}
           isSelected={true}
           style={{ opacity: 0.5, pointerEvents: "none" }}
         />

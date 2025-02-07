@@ -1,8 +1,8 @@
 import * as React from "react";
+import { Doc } from "../../convex/_generated/dataModel";
 
 type FileIconProps = {
-  name: string;
-  position: { x: number; y: number };
+  file: Doc<"files">;
   isSelected: boolean;
   onClick?: (e: React.MouseEvent) => void;
   onMouseDown?: (e: React.MouseEvent) => void;
@@ -14,8 +14,7 @@ type FileIconProps = {
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
-  name,
-  position,
+  file,
   isSelected,
   onClick,
   onMouseDown,
@@ -29,8 +28,8 @@ export const FileIcon: React.FC<FileIconProps> = ({
     <div
       className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto"
       style={{
-        left: position.x - 20, // Center the icon on drop position
-        top: position.y - 20,
+        left: file.position.x - 20, // Center the icon on drop position
+        top: file.position.y - 20,
         ...style,
       }}
       draggable={isSelected ? !!onDragStart : false}
@@ -74,7 +73,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
         onClick={onClick}
         onMouseDown={onMouseDown}
       >
-        {name}
+        {file.name}
       </span>
     </div>
   );

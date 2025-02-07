@@ -11,12 +11,5 @@ export const UnselectedItem: React.FC<UnselectedItemProps> = ({
   file,
   onClick,
 }) => {
-  return (
-    <FileIcon
-      name={file.name}
-      position={file.position}
-      onMouseDown={onClick}
-      isSelected={false}
-    />
-  );
+  return <FileIcon file={file} onMouseDown={onClick} isSelected={false} />;
 };
