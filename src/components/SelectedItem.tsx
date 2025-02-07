@@ -6,6 +6,7 @@ import { useFileDownloadDrag } from "../hooks/useFileDownloadDrag";
 
 type SelectedItemProps = {
   file: Doc<"files">;
+  allSelectedFiles: Doc<"files">[];
   onDragEnd: (newPosition: { x: number; y: number }) => void;
   onDelete?: () => void;
   onClick: (e: React.MouseEvent) => void;
@@ -14,6 +15,7 @@ type SelectedItemProps = {
 
 export const SelectedItem: React.FC<SelectedItemProps> = ({
   file,
+  allSelectedFiles,
   onDragEnd,
   onDelete,
   disableTooltip,
@@ -26,9 +28,14 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     isDragging,
     handleDragStart: handleExternalDragStart,
     handleDragEnd: handleExternalDragEnd,
-  } = useFileDownloadDrag({ file });
+    canDownload,
+  } = useFileDownloadDrag({
+    files: allSelectedFiles.length > 1 ? allSelectedFiles : [file],
+    singleFile: allSelectedFiles.length === 1,
+  });
 
   const handleDragStart = (e: React.DragEvent) => {
+    if (!canDownload) return;
     setIsInternalDragging(true);
     // Calculate offset between mouse position and element position
     const rect = (e.target as HTMLElement).getBoundingClientRect();

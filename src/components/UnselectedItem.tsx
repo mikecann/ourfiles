@@ -12,7 +12,10 @@ export const UnselectedItem: React.FC<UnselectedItemProps> = ({
   file,
   onClick,
 }) => {
-  const { handleDragStart, handleDragEnd } = useFileDownloadDrag({ file });
+  const { handleDragStart, handleDragEnd, canDownload } = useFileDownloadDrag({
+    files: [file],
+    singleFile: true,
+  });
 
   return (
     <FileIcon
@@ -21,7 +24,7 @@ export const UnselectedItem: React.FC<UnselectedItemProps> = ({
       isSelected={false}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      draggable={true}
+      draggable={canDownload}
     />
   );
 };

@@ -252,6 +252,7 @@ export const FileUpload: React.FC = () => {
         <SelectedItem
           key={file._id}
           file={file}
+          allSelectedFiles={selectedFiles}
           onDragEnd={(newPosition) => {
             updateFilePosition({
               id: file._id,
