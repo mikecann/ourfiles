@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { DeleteFileDialog } from "./DeleteFileDialog";
+import { Toaster } from "./ui/toast";
 
 export const FileUpload: React.FC = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<Set<Id<"files">>>(
@@ -216,68 +217,71 @@ export const FileUpload: React.FC = () => {
   };
 
   return (
-    <div
-      {...getRootProps()}
-      ref={containerRef}
-      onMouseDown={handleContainerMouseDown}
-      onMouseMove={handleContainerMouseMove}
-      onMouseUp={handleContainerMouseUp}
-      onMouseLeave={handleContainerMouseUp}
-      className={`
-        min-h-screen pt-20 flex items-center justify-center relative
-        ${isDragActive ? "bg-blue-50" : "bg-gray-50"}
-        transition-colors duration-200 ease-in-out
-      `}
-    >
-      <AddFiles onClick={handleSelectFilesClick} />
+    <>
+      <div
+        {...getRootProps()}
+        ref={containerRef}
+        onMouseDown={handleContainerMouseDown}
+        onMouseMove={handleContainerMouseMove}
+        onMouseUp={handleContainerMouseUp}
+        onMouseLeave={handleContainerMouseUp}
+        className={`
+          min-h-screen pt-20 flex items-center justify-center relative
+          ${isDragActive ? "bg-blue-50" : "bg-gray-50"}
+          transition-colors duration-200 ease-in-out
+        `}
+      >
+        <AddFiles onClick={handleSelectFilesClick} />
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        className="hidden"
-        onChange={handleFileInputChange}
-      />
-
-      {unselectedFiles.map((file) => (
-        <UnselectedItem
-          key={file._id}
-          file={file}
-          onClick={(e) => handleFileClick(file._id, e)}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={handleFileInputChange}
         />
-      ))}
 
-      {selectedFiles.map((file) => (
-        <SelectedItem
-          key={file._id}
-          file={file}
-          allSelectedFiles={selectedFiles}
-          onDragEnd={(newPosition) => {
-            updateFilePosition({
-              id: file._id,
-              position: newPosition,
-            });
-          }}
-          onDelete={() => setSelectedFileIds(new Set())}
-          onClick={(e) => handleFileClick(file._id, e)}
-          disableTooltip={selectedFiles.length > 1}
+        {unselectedFiles.map((file) => (
+          <UnselectedItem
+            key={file._id}
+            file={file}
+            onClick={(e) => handleFileClick(file._id, e)}
+          />
+        ))}
+
+        {selectedFiles.map((file) => (
+          <SelectedItem
+            key={file._id}
+            file={file}
+            allSelectedFiles={selectedFiles}
+            onDragEnd={(newPosition) => {
+              updateFilePosition({
+                id: file._id,
+                position: newPosition,
+              });
+            }}
+            onDelete={() => setSelectedFileIds(new Set())}
+            onClick={(e) => handleFileClick(file._id, e)}
+            disableTooltip={selectedFiles.length > 1}
+          />
+        ))}
+
+        {hasFiles ? null : <EmptyState />}
+
+        {isDragActive && <DropZoneOverlay />}
+
+        {isDragSelecting && (
+          <SelectionBox start={selectionStart} current={selectionCurrent} />
+        )}
+
+        <DeleteFileDialog
+          open={showDeleteConfirm}
+          onOpenChange={setShowDeleteConfirm}
+          onConfirm={handleConfirmDelete}
+          fileCount={selectedFileIds.size}
         />
-      ))}
-
-      {hasFiles ? null : <EmptyState />}
-
-      {isDragActive && <DropZoneOverlay />}
-
-      {isDragSelecting && (
-        <SelectionBox start={selectionStart} current={selectionCurrent} />
-      )}
-
-      <DeleteFileDialog
-        open={showDeleteConfirm}
-        onOpenChange={setShowDeleteConfirm}
-        onConfirm={handleConfirmDelete}
-        fileCount={selectedFileIds.size}
-      />
-    </div>
+      </div>
+      <Toaster />
+    </>
   );
 };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Doc } from "../../convex/_generated/dataModel";
+import { toast } from "sonner";
 
 // Add type declarations for the File System Access API
 declare global {
@@ -32,25 +33,56 @@ export function useFileDownloadDrag({
         mode: "readwrite",
       });
 
+      const toastId = toast.loading(
+        `Downloading ${uploadedFiles.length} files...`,
+        {
+          description: "Starting download...",
+        },
+      );
+
+      let completedFiles = 0;
+
       // Download each file and write it to the directory
       await Promise.all(
         uploadedFiles.map(async (file) => {
           if (file.uploadState.kind !== "uploaded") return;
 
-          const response = await fetch(file.uploadState.url);
-          const blob = await response.blob();
+          try {
+            const response = await fetch(file.uploadState.url);
+            const blob = await response.blob();
 
-          const fileHandle = await dirHandle.getFileHandle(file.name, {
-            create: true,
-          });
-          const writable = await fileHandle.createWritable();
-          await writable.write(blob);
-          await writable.close();
+            const fileHandle = await dirHandle.getFileHandle(file.name, {
+              create: true,
+            });
+            const writable = await fileHandle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+
+            completedFiles++;
+            toast.loading(`Downloading ${uploadedFiles.length} files...`, {
+              id: toastId,
+              description: `Downloaded ${completedFiles} of ${uploadedFiles.length} files`,
+            });
+          } catch (error) {
+            console.error(`Failed to download ${file.name}:`, error);
+            toast.error(`Failed to download ${file.name}`);
+          }
         }),
       );
+
+      toast.success(`Downloaded ${completedFiles} files`, {
+        id: toastId,
+        description:
+          completedFiles === uploadedFiles.length
+            ? "All files downloaded successfully"
+            : `${uploadedFiles.length - completedFiles} files failed to download`,
+      });
     } catch (error: unknown) {
       if (error instanceof Error && error.name !== "AbortError") {
         console.error("Failed to save files:", error);
+        toast.error("Failed to download files", {
+          description: error.message,
+        });
       }
     }
     setShowDownloadDialog(false);
