@@ -13,7 +13,7 @@
         "@radix-ui/react-toggle-group": "^1.0.4",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
-        "convex": "^1.17.0",
+        "convex": "^1.18.3-alpha.5",
         "jszip": "^3.10.1",
         "next-themes": "^0.3.0",
         "react": "^18.3.1",
@@ -386,7 +386,7 @@
 
     "convert-source-map": ["convert-source-map@2.0.0", "", {}, "sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg=="],
 
-    "convex": ["convex@1.19.0", "", { "dependencies": { "esbuild": "0.23.0", "jwt-decode": "^3.1.2", "prettier": "3.4.2" }, "peerDependencies": { "@auth0/auth0-react": "^2.0.1", "@clerk/clerk-react": "^4.12.8 || ^5.0.0", "react": "^17.0.2 || ^18.0.0 || ^19.0.0-0 || ^19.0.0", "react-dom": "^17.0.2 || ^18.0.0 || ^19.0.0-0 || ^19.0.0" }, "optionalPeers": ["@auth0/auth0-react", "@clerk/clerk-react"], "bin": "bin/main.js" }, "sha512-TcglkEi392oK0Ah+zDoetFCRFXBM/lvCewi6AWfIgVCtVc9I/xdimdFOLN602V5wp7H4PN8wotpdIoixwSH7mQ=="],
+    "convex": ["convex@1.18.3-alpha.5", "", { "dependencies": { "esbuild": "0.23.0", "jwt-decode": "^3.1.2", "prettier": "3.4.2" }, "peerDependencies": { "@auth0/auth0-react": "^2.0.1", "@clerk/clerk-react": "^4.12.8 || ^5.0.0", "react": "^17.0.2 || ^18.0.0 || ^19.0.0-0 || ^19.0.0", "react-dom": "^17.0.2 || ^18.0.0 || ^19.0.0-0 || ^19.0.0" }, "optionalPeers": ["@auth0/auth0-react", "@clerk/clerk-react", "react", "react-dom"], "bin": { "convex": "bin/main.js" } }, "sha512-5k7rkrKfznNzOb8m4j21z1GtxOTZ5uujs0cDk/0EtLTbup8hNATV9s2GXzNaVOsdmASMEjIhvRLAnqT0ARjoDA=="],
 
     "core-util-is": ["core-util-is@1.0.3", "", {}, "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ=="],
 
