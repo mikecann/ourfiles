@@ -1,8 +1,7 @@
 ---
 description: Guidelines and best practices for building Convex projects, including database schema design, queries, mutations, and real-world examples
-globs: **/*.{ts,tsx,js,jsx}
+globs: globs: **/*.{ts,tsx,js,jsx}
 ---
-
 <convex_guidelines>
   <function_guidelines>
     <new_function_syntax>
@@ -34,12 +33,49 @@ globs: **/*.{ts,tsx,js,jsx}
           }),
       });
       ```
+      - HTTP endpoints are always registered at the exact path you specify in the `path` field. For example, if you specify `/api/someRoute`, the endpoint will be registered at `/api/someRoute`.
     </http_endpoint_syntax>
+    <validators>
+      - Below is an example of an array validator:
+                            ```typescript
+                            import { mutation } from "./_generated/server";
+                            import { v } from "convex/values";
+
+                            export default mutation({
+                            args: {
+                                simpleArray: v.array(v.union(v.string(), v.number())),
+                            },
+                            handler: async (ctx, args) => {
+                                //...
+                            },
+                            });
+                            ```
+      - Below is an example of a schema with validators that codify a discriminated union type:
+                            ```typescript
+                            import { defineSchema, defineTable } from "convex/server";
+                            import { v } from "convex/values";
+
+                            export default defineSchema({
+                                results: defineTable(
+                                    v.union(
+                                        v.object({
+                                            kind: v.literal("error"),
+                                            errorMessage: v.string(),
+                                        }),
+                                        v.object({
+                                            kind: v.literal("success"),
+                                            value: v.number(),
+                                        }),
+                                    ),
+                                )
+                            });
+                            ```
+    </validators>
     <function_registration>
-      - Use `internalQuery`, `internalMutation`, and `internalAction` to register internal functions. These functions are private and aren't part of an app's API. They can only be called by other Convex functions.
+      - Use `internalQuery`, `internalMutation`, and `internalAction` to register internal functions. These functions are private and aren't part of an app's API. They can only be called by other Convex functions. These functions are always imported from `./_generated/server`.
       - Use `query`, `mutation`, and `action` to register public functions. These functions are part of the public API and are exposed to the public Internet. Do NOT use `query`, `mutation`, or `action` to register sensitive internal functions that should be kept private.
       - You CANNOT register a function through the `api` or `internal` objects.
-      - ALWAYS include argument and return validators for all Convex functions. If a function doesn't return anything, include `returns: v.null()` as its output validator.
+      - ALWAYS include argument and return validators for all Convex functions. This includes all of `query`, `internalQuery`, `mutation`, `internalMutation`, `action`, and `internalAction`. If a function doesn't return anything, include `returns: v.null()` as its output validator.
       - If the JavaScript implementation of a Convex function doesn't have a return value, it implicitly returns `null`.
     </function_registration>
     <function_calling>
@@ -82,6 +118,30 @@ globs: **/*.{ts,tsx,js,jsx}
       - Use `query`, `mutation`, and `action` to define public functions.
       - Use `internalQuery`, `internalMutation`, and `internalAction` to define private, internal functions.
     </api_design>
+    <pagination>
+      - Paginated queries are queries that return a list of results in incremental pages.
+      - You can define pagination using the following syntax:
+
+                            ```ts
+                            import { v } from "convex/values";
+                            import { query, mutation } from "./_generated/server";
+                            import { paginationOptsValidator } from "convex/server";
+                            export const listWithExtraArg = query({
+                                args: { paginationOpts: paginationOptsValidator, author: v.string() },
+                                handler: async (ctx, args) => {
+                                    return await ctx.db
+                                    .query("messages")
+                                    .filter((q) => q.eq(q.field("author"), args.author))
+                                    .order("desc")
+                                    .paginate(args.paginationOpts);
+                                },
+                            });
+                            ```
+      - A query that ends in `.paginate()` returns an object that has the following properties:
+                            - page (contains an array of documents that you fetches)
+                            - isDone (a boolean that represents whether or not this is the last page of documents)
+                            - continueCursor (a string that represents the cursor to use to fetch the next page of documents)
+    </pagination>
   </function_guidelines>
   <validator_guidelines>
     - `v.bigint()` is deprecated for representing signed 64-bit integers. Use `v.int64()` instead.
@@ -91,11 +151,16 @@ globs: **/*.{ts,tsx,js,jsx}
     - Always define your schema in `convex/schema.ts`.
     - Always import the schema definition functions from `convex/server`:
     - System fields are automatically added to all documents and are prefixed with an underscore.
+    - Always include all index fields in the index name. For example, if an index is defined as `["field1", "field2"]`, the index name should be "by_field1_and_field2".
+    - Index fields must be queried in the same order they are defined. If you want to be able to query by "field1" then "field2" and by "field2" then "field1", you must create separate indexes.
   </schema_guidelines>
   <typescript_guidelines>
     - You can use the helper typescript type `Id` imported from './_generated/dataModel' to get the type of the id for a given table. For example if there is a table called 'users' you can use `Id<'users'>` to get the type of the id for that table.
     - If you need to define a `Record` make sure that you correctly provide the type of the key and value in the type. For example a validator `v.record(v.id('users'), v.string())` would have the type `Record<Id<'users'>, string>`.
     - Be strict with types, particularly around id's of documents. For example, if a function takes in an id for a document in the 'users' table, take in `Id<'users'>` rather than `string`.
+    - Always use `as const` for string literals in discriminated union types.
+    - When using the `Array` type, make sure to always define your arrays as `const array: Array<T> = [...];`
+    - When using the `Record` type, make sure to always define your records as `const record: Record<KeyType, ValueType> = {...};`
   </typescript_guidelines>
   <full_text_search_guidelines>
     - A query for "10 messages in channel '#general' that best match the query 'hello hi' in their body" would look like:
@@ -111,6 +176,7 @@ const messages = await ctx.db
     - Do NOT use `filter` in queries. Instead, define an index in the schema and use `withIndex` instead.
     - Convex queries do NOT support `.delete()`. Instead, `.collect()` the results, iterate over them, and call `ctx.db.delete(row._id)` on each result.
     - Use `.unique()` to get a single document from a query. This method will throw an error if there are multiple documents that match the query.
+    - When using async iteration, don't use `.collect()` or `.take(n)` on the result of a query. Instead, use the `for await (const row of query)` syntax.
     <ordering>
       - By default Convex always returns documents in ascending `_creationTime` order.
       - You can use `.order('asc')` or `.order('desc')` to pick whether a query is in ascending or descending order. If the order isn't specified, it defaults to ascending.
@@ -129,11 +195,19 @@ const messages = await ctx.db
                             ```ts
                             import { cronJobs } from "convex/server";
                             import { internal } from "./_generated/api";
+                            import { internalAction } from "./_generated/server";
+
+                            const empty = internalAction({
+                              args: {},
+                              handler: async (ctx, args) => {
+                                console.log("empty");
+                              },
+                            });
 
                             const crons = cronJobs();
 
-                            // Run `internal.users.deleteInactive` every two hours.
-                            crons.interval("delete inactive users", { hours: 2 }, internal.users.deleteInactive, {});
+                            // Run `internal.crons.empty` every two hours.
+                            crons.interval("delete inactive users", { hours: 2 }, internal.crons.empty, {});
 
                             export default crons;
                             ```
@@ -288,7 +362,31 @@ Internal Functions:
   "dependencies": {
     "convex": "^1.17.4",
     "openai": "^4.79.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
   }
+}
+    </file>
+    <file path="tsconfig.json">
+      {
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "exclude": ["convex"],
+  "include": ["**/src/**/*.tsx", "**/src/**/*.ts", "vite.config.ts"]
 }
     </file>
     <file path="convex/index.ts">
@@ -487,6 +585,11 @@ export default defineSchema({
     content: v.string(),
   }).index("by_channel", ["channelId"]),
 });
+    </file>
+    <file path="src/App.tsx">
+      export default function App() {
+  return <div>Hello World</div>;
+}
     </file>
   </response>
 </example>
