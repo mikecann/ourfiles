@@ -2,8 +2,7 @@ import * as React from "react";
 import { FileIcon } from "./FileIcon";
 import { FileTooltip } from "./FileTooltip";
 import { Doc } from "../../convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { useFileDownloadDrag } from "../hooks/useFileDownloadDrag";
 
 type SelectedItemProps = {
   file: Doc<"files">;
@@ -16,14 +15,15 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   onDragEnd,
   onDelete,
 }) => {
-  const [isDragging, setIsDragging] = React.useState(false);
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
   const [mouseOffset, setMouseOffset] = React.useState({ x: 0, y: 0 });
-  const downloadUrl = useQuery(api.files.getDownloadUrl, { id: file._id });
+  const {
+    isDragging,
+    handleDragStart: handleExternalDragStart,
+    handleDragEnd: handleExternalDragEnd,
+  } = useFileDownloadDrag({ file });
 
   const handleDragStart = (e: React.DragEvent) => {
-    setIsDragging(true);
-
     // Calculate offset between mouse position and element position
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     const offsetX = e.clientX - rect.left;
@@ -35,14 +35,8 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
       y: e.clientY - offsetY + 20,
     });
 
-    // Set up the drag data for external drops
-    if (downloadUrl && file.uploadState.kind === "uploaded") {
-      e.dataTransfer.effectAllowed = "copy";
-      e.dataTransfer.setData(
-        "DownloadURL",
-        `${file.type}:${file.name}:${downloadUrl}`,
-      );
-    }
+    // Handle external drag and drop
+    handleExternalDragStart(e);
 
     // Create a transparent drag image
     const dragImage = new Image();
@@ -61,7 +55,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
-    setIsDragging(false);
+    handleExternalDragEnd();
     // Only update position if dropped inside the window
     if (
       e.clientX > 0 &&
