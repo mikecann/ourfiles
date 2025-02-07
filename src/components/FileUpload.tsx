@@ -115,6 +115,15 @@ export const FileUpload: React.FC = () => {
         <SelectedItem
           droppedFile={droppedFiles[selectedFileIndex]}
           onClick={(e) => handleFileClick(selectedFileIndex, e)}
+          onDragEnd={(newPosition) => {
+            setDroppedFiles((prev) =>
+              prev.map((file, index) =>
+                index === selectedFileIndex
+                  ? { ...file, position: newPosition }
+                  : file,
+              ),
+            );
+          }}
         />
       )}
 

@@ -4,7 +4,8 @@ type FileIconProps = {
   file: File;
   position: { x: number; y: number };
   isSelected: boolean;
-  onClick: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
+  style?: React.CSSProperties;
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
@@ -12,13 +13,15 @@ export const FileIcon: React.FC<FileIconProps> = ({
   position,
   isSelected,
   onClick,
+  style,
 }) => {
   return (
     <div
-      className="absolute flex flex-col items-center gap-1 cursor-pointer pointer-events-none"
+      className="absolute flex flex-col items-center gap-1 cursor-pointer pointer-events-none select-none"
       style={{
         left: position.x - 20, // Center the icon on drop position
         top: position.y - 20,
+        ...style,
       }}
     >
       <div
