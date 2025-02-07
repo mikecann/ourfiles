@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:frontend dev:backend",
+    "dev": "npm-run-all --parallel dev:frontend dev:backend dev:ts",
     "dev:frontend": "vite --open",
+    "dev:ts": "tsc -b -w --preserveWatchOutput",
     "dev:backend": "convex dev",
     "predev": "convex dev --until-success && convex dashboard",
     "build": "tsc -b && vite build",

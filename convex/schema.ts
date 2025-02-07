@@ -10,5 +10,18 @@ export default defineSchema({
       x: v.number(),
       y: v.number(),
     }),
+    uploadState: v.union(
+      v.object({
+        kind: v.literal("created"),
+      }),
+      v.object({
+        kind: v.literal("uploading"),
+        progress: v.number(),
+      }),
+      v.object({
+        kind: v.literal("uploaded"),
+        storageId: v.id("_storage"),
+      }),
+    ),
   }),
 });

@@ -11,8 +11,12 @@ export function useOptimisticCreateFile() {
       const optimisticFile: Doc<"files"> = {
         _id: crypto.randomUUID() as Id<"files">,
         _creationTime: Date.now(),
+        uploadState: {
+          kind: "created",
+        },
         ...args,
       };
+
       localStore.setQuery(api.files.list, {}, [
         ...existingFiles,
         optimisticFile,
