@@ -65,6 +65,16 @@ export const remove = mutation({
     for (const id of ids) {
       const file = await ctx.db.get(id);
       if (!file) throw new ConvexError(`File ${id} not found`);
+
+      // Delete from storage if file is uploading or uploaded
+      if (
+        file.uploadState.kind === "uploading" ||
+        file.uploadState.kind === "uploaded"
+      ) {
+        const storageId = file.uploadState.storageId;
+        await ctx.storage.delete(storageId);
+      }
+
       await ctx.db.delete(id);
     }
   },

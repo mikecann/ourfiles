@@ -9,7 +9,7 @@ export function useOptimisticCreateFile() {
       if (existingFiles === undefined) return;
 
       const optimisticFiles: Doc<"files">[] = args.files.map((file) => ({
-        _id: crypto.randomUUID() as Id<"files">,
+        _id: `${Math.random()}` as Id<"files">,
         _creationTime: Date.now(),
         uploadState: {
           kind: "created" as const,
