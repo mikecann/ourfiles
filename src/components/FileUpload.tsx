@@ -11,7 +11,7 @@ import {
   useOptimisticCreateFile,
   useOptimisticUpdateFilePosition,
 } from "../hooks/useOptimisticFiles";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 export const FileUpload: React.FC = () => {
@@ -24,18 +24,43 @@ export const FileUpload: React.FC = () => {
   const files = useQuery(api.files.list) ?? [];
   const createFile = useOptimisticCreateFile();
   const updateFilePosition = useOptimisticUpdateFilePosition();
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const startUpload = useMutation(api.files.startUpload);
+  const updateUploadProgress = useMutation(api.files.updateUploadProgress);
+  const completeUpload = useMutation(api.files.completeUpload);
 
   const hasFiles = files.length > 0;
 
   const unselectedFiles = files.filter((file) => file._id !== selectedFileId);
 
+  const handleFileUpload = async (file: File, fileId: Id<"files">) => {
+    try {
+      const uploadUrl = await generateUploadUrl();
+      await startUpload({ id: fileId });
+
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      if (!result.ok)
+        throw new Error(`Upload failed with status ${result.status}`);
+
+      const { storageId } = await result.json();
+      await completeUpload({ id: fileId, storageId });
+    } catch (error) {
+      console.error("Upload failed:", error);
+    }
+  };
+
   const onDrop = useCallback(
-    (acceptedFiles: File[], event: React.DragEvent) => {
+    async (acceptedFiles: File[], event: React.DragEvent) => {
       const dropPosition = { x: event.pageX, y: event.pageY };
       setSelectedFileId(null);
 
-      acceptedFiles.forEach((file, index) => {
-        createFile({
+      for (const [index, file] of acceptedFiles.entries()) {
+        const fileId = await createFile({
           name: file.name,
           size: file.size,
           type: file.type,
@@ -44,9 +69,17 @@ export const FileUpload: React.FC = () => {
             y: dropPosition.y + index * 20,
           },
         });
-      });
+
+        handleFileUpload(file, fileId);
+      }
     },
-    [createFile],
+    [
+      createFile,
+      generateUploadUrl,
+      startUpload,
+      updateUploadProgress,
+      completeUpload,
+    ],
   );
 
   const { getRootProps, isDragActive } = useDropzone({
@@ -67,13 +100,15 @@ export const FileUpload: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = Array.from(e.target.files || []);
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
-    files.forEach((file, index) => {
-      createFile({
+    for (const [index, file] of files.entries()) {
+      const fileId = await createFile({
         name: file.name,
         size: file.size,
         type: file.type,
@@ -82,7 +117,9 @@ export const FileUpload: React.FC = () => {
           y: centerY + index * 20,
         },
       });
-    });
+
+      handleFileUpload(file, fileId);
+    }
 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
