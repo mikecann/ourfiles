@@ -8,6 +8,7 @@ import { DropZoneOverlay } from "./DropZoneOverlay";
 import { EmptyState } from "./EmptyState";
 import { SelectionBox } from "./SelectionBox";
 import { Id } from "../../convex/_generated/dataModel";
+import { HelpCircle } from "lucide-react";
 import {
   useOptimisticUpdateFilePosition,
   useOptimisticUpdateFilePositions,
@@ -170,6 +171,11 @@ export const FileUpload: React.FC = () => {
           transition-colors duration-200 ease-in-out
         `}
       >
+        <div className="fixed bottom-4 right-4 text-sm text-gray-400 select-none pointer-events-none flex items-center gap-2">
+          <HelpCircle className="w-4 h-4" />
+          Drag files in and out to upload and download
+        </div>
+
         <AddFiles onClick={handleSelectFilesClick} />
 
         <input
