@@ -10,20 +10,32 @@ import { Id } from "../../convex/_generated/dataModel";
 import {
   useOptimisticCreateFile,
   useOptimisticUpdateFilePosition,
+  useOptimisticRemoveFile,
 } from "../hooks/useOptimisticFiles";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { DeleteFileDialog } from "./DeleteFileDialog";
 
 export const FileUpload: React.FC = () => {
   const [selectedFileId, setSelectedFileId] = useState<Id<"files"> | null>(
     null,
   );
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const files = useQuery(api.files.list) ?? [];
   const createFile = useOptimisticCreateFile();
   const updateFilePosition = useOptimisticUpdateFilePosition();
+  const removeFile = useOptimisticRemoveFile();
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const startUpload = useMutation(api.files.startUpload);
   const updateUploadProgress = useMutation(api.files.updateUploadProgress);
@@ -124,6 +136,26 @@ export const FileUpload: React.FC = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Delete" && selectedFileId && !showDeleteConfirm)
+        setShowDeleteConfirm(true);
+    },
+    [selectedFileId, showDeleteConfirm],
+  );
+
+  React.useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  const handleConfirmDelete = () => {
+    if (!selectedFileId) return;
+    removeFile({ id: selectedFileId });
+    setSelectedFileId(null);
+    setShowDeleteConfirm(false);
+  };
+
   return (
     <div
       {...getRootProps()}
@@ -168,6 +200,12 @@ export const FileUpload: React.FC = () => {
       {hasFiles ? null : <EmptyState />}
 
       {isDragActive && <DropZoneOverlay />}
+
+      <DeleteFileDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };
