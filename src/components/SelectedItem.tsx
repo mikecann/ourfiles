@@ -2,6 +2,8 @@ import * as React from "react";
 import { FileIcon } from "./FileIcon";
 import { FileTooltip } from "./FileTooltip";
 import { Doc } from "../../convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 type SelectedItemProps = {
   file: Doc<"files">;
@@ -17,6 +19,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   const [isDragging, setIsDragging] = React.useState(false);
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
   const [mouseOffset, setMouseOffset] = React.useState({ x: 0, y: 0 });
+  const downloadUrl = useQuery(api.files.getDownloadUrl, { id: file._id });
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
@@ -28,9 +31,18 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     setMouseOffset({ x: offsetX, y: offsetY });
 
     setDragPosition({
-      x: e.clientX - offsetX + 20, // Add back the centering offset from FileIcon
+      x: e.clientX - offsetX + 20,
       y: e.clientY - offsetY + 20,
     });
+
+    // Set up the drag data for external drops
+    if (downloadUrl && file.uploadState.kind === "uploaded") {
+      e.dataTransfer.effectAllowed = "copy";
+      e.dataTransfer.setData(
+        "DownloadURL",
+        `${file.type}:${file.name}:${downloadUrl}`,
+      );
+    }
 
     // Create a transparent drag image
     const dragImage = new Image();
@@ -50,10 +62,17 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
 
   const handleDragEnd = (e: React.DragEvent) => {
     setIsDragging(false);
-    onDragEnd({
-      x: e.clientX - mouseOffset.x + 20,
-      y: e.clientY - mouseOffset.y + 20,
-    });
+    // Only update position if dropped inside the window
+    if (
+      e.clientX > 0 &&
+      e.clientY > 0 &&
+      e.clientX < window.innerWidth &&
+      e.clientY < window.innerHeight
+    )
+      onDragEnd({
+        x: e.clientX - mouseOffset.x + 20,
+        y: e.clientY - mouseOffset.y + 20,
+      });
   };
 
   return (

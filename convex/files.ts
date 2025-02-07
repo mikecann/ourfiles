@@ -113,3 +113,14 @@ export const completeUpload = mutation({
     });
   },
 });
+
+export const getDownloadUrl = query({
+  args: { id: v.id("files") },
+  handler: async (ctx, { id }) => {
+    const file = await ctx.db.get(id);
+    if (!file) throw new ConvexError("File not found");
+    if (file.uploadState.kind !== "uploaded") return null;
+
+    return await ctx.storage.getUrl(file.uploadState.storageId);
+  },
+});
