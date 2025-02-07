@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { Doc, Id } from "../../convex/_generated/dataModel";
+import { Doc } from "../../convex/_generated/dataModel";
 
 type UseFileDownloadDragProps = {
   files: Doc<"files">[];
@@ -14,26 +12,22 @@ export function useFileDownloadDrag({
 }: UseFileDownloadDragProps) {
   const [isDragging, setIsDragging] = useState(false);
 
-  // Only fetch URLs for uploaded files
+  // Only use uploaded files
   const uploadedFiles = files.filter((f) => f.uploadState.kind === "uploaded");
-  const downloadUrls = useQuery(api.files.getDownloadUrl, {
-    ids: uploadedFiles.map((f) => f._id),
-  });
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
-    if (!downloadUrls?.length || !uploadedFiles.length) return;
+    if (!uploadedFiles.length) return;
 
     e.dataTransfer.effectAllowed = "copy";
 
     // If single file or only one file is selected, use simple format
     if (singleFile || uploadedFiles.length === 1) {
       const file = uploadedFiles[0];
-      const url = downloadUrls[0];
-      if (url) {
+      if (file.uploadState.kind === "uploaded") {
         e.dataTransfer.setData(
           "DownloadURL",
-          `${file.type}:${file.name}:${url}`,
+          `${file.type}:${file.name}:${file.uploadState.url}`,
         );
       }
       return;
@@ -41,9 +35,9 @@ export function useFileDownloadDrag({
 
     // For multiple files, combine all download URLs
     const downloadList = uploadedFiles
-      .map((file, i) => {
-        if (!downloadUrls[i]) return null;
-        return `${file.type}:${file.name}:${downloadUrls[i]}`;
+      .map((file) => {
+        if (file.uploadState.kind !== "uploaded") return null;
+        return `${file.type}:${file.name}:${file.uploadState.url}`;
       })
       .filter(Boolean);
 
@@ -58,6 +52,6 @@ export function useFileDownloadDrag({
     isDragging,
     handleDragStart,
     handleDragEnd,
-    canDownload: !!(downloadUrls?.length && uploadedFiles.length),
+    canDownload: uploadedFiles.length > 0,
   };
 }

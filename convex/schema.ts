@@ -17,10 +17,12 @@ export default defineSchema({
       v.object({
         kind: v.literal("uploading"),
         progress: v.number(),
+        storageId: v.id("_storage"),
       }),
       v.object({
         kind: v.literal("uploaded"),
         storageId: v.id("_storage"),
+        url: v.string(),
       }),
     ),
   }),
