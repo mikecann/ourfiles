@@ -1,18 +1,24 @@
 import * as React from "react";
 
 type FileTooltipProps = {
-  file: File;
+  name: string;
+  size: number;
+  type: string;
 };
 
-export const FileTooltip: React.FC<FileTooltipProps> = ({ file }) => {
+export const FileTooltip: React.FC<FileTooltipProps> = ({
+  name,
+  size,
+  type,
+}) => {
   return (
     <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-none flex flex-col items-center animate-popIn">
       <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[200px]">
         <div className="flex flex-col gap-1">
           <div className="text-gray-600">
-            Size: {(file.size / 1024).toFixed(1)} KB
+            Size: {(size / 1024).toFixed(1)} KB
           </div>
-          <div className="text-gray-600">Type: {file.type || "Unknown"}</div>
+          <div className="text-gray-600">Type: {type || "Unknown"}</div>
         </div>
       </div>
       {/* Triangle pointer */}

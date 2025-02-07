@@ -1,15 +1,15 @@
 import * as React from "react";
 import { FileIcon } from "./FileIcon";
 import { FileTooltip } from "./FileTooltip";
-import type { DroppedFile } from "./FileUpload";
+import type { ConvexFile } from "./FileUpload";
 
 type SelectedItemProps = {
-  droppedFile: DroppedFile;
+  file: ConvexFile;
   onDragEnd: (newPosition: { x: number; y: number }) => void;
 };
 
 export const SelectedItem: React.FC<SelectedItemProps> = ({
-  droppedFile,
+  file,
   onDragEnd,
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
@@ -57,21 +57,26 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   return (
     <>
       <FileIcon
-        file={droppedFile.file}
-        position={droppedFile.position}
+        name={file.name}
+        position={file.position}
         isSelected={true}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
         tooltip={
           isDragging ? undefined : (
-            <FileTooltip key={droppedFile.id} file={droppedFile.file} />
+            <FileTooltip
+              key={file._id}
+              name={file.name}
+              size={file.size}
+              type={file.type}
+            />
           )
         }
       />
       {isDragging && (
         <FileIcon
-          file={droppedFile.file}
+          name={file.name}
           position={dragPosition}
           isSelected={true}
           style={{ opacity: 0.5, pointerEvents: "none" }}

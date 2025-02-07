@@ -1,20 +1,20 @@
 import * as React from "react";
 import { FileIcon } from "./FileIcon";
-import type { DroppedFile } from "./FileUpload";
+import type { ConvexFile } from "./FileUpload";
 
 type UnselectedItemProps = {
-  droppedFile: DroppedFile;
+  file: ConvexFile;
   onClick: (e: React.MouseEvent) => void;
 };
 
 export const UnselectedItem: React.FC<UnselectedItemProps> = ({
-  droppedFile,
+  file,
   onClick,
 }) => {
   return (
     <FileIcon
-      file={droppedFile.file}
-      position={droppedFile.position}
+      name={file.name}
+      position={file.position}
       onMouseDown={onClick}
       isSelected={false}
     />

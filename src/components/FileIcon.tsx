@@ -1,7 +1,7 @@
 import * as React from "react";
 
 type FileIconProps = {
-  file: File;
+  name: string;
   position: { x: number; y: number };
   isSelected: boolean;
   onClick?: (e: React.MouseEvent) => void;
@@ -14,7 +14,7 @@ type FileIconProps = {
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
-  file,
+  name,
   position,
   isSelected,
   onClick,
@@ -74,7 +74,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
         onClick={onClick}
         onMouseDown={onMouseDown}
       >
-        {file.name}
+        {name}
       </span>
     </div>
   );

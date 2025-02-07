@@ -6,42 +6,53 @@ import { UnselectedItem } from "./UnselectedItem";
 import { SelectFilesButton } from "./SelectFilesButton";
 import { DropZoneOverlay } from "./DropZoneOverlay";
 import { EmptyState } from "./EmptyState";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Id } from "../../convex/_generated/dataModel";
 
-export type DroppedFile = {
-  id: string;
-  file: File;
+export type ConvexFile = {
+  _id: Id<"files">;
+  _creationTime: number;
+  name: string;
+  size: number;
+  type: string;
   position: { x: number; y: number };
 };
 
 export const FileUpload: React.FC = () => {
-  const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+  const [selectedFileId, setSelectedFileId] = useState<Id<"files"> | null>(
+    null,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const hasFiles = droppedFiles.length > 0;
+  const files = useQuery(api.files.list) ?? [];
+  const create = useMutation(api.files.create);
+  const updatePosition = useMutation(api.files.updatePosition);
+  const remove = useMutation(api.files.remove);
 
-  const unselectedFiles = droppedFiles.filter(
-    (file) => file.id !== selectedFileId,
-  );
+  const hasFiles = files.length > 0;
+
+  const unselectedFiles = files.filter((file) => file._id !== selectedFileId);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], event: React.DragEvent) => {
       const dropPosition = { x: event.pageX, y: event.pageY };
       setSelectedFileId(null);
 
-      const newFiles = acceptedFiles.map((file, index) => ({
-        id: crypto.randomUUID(),
-        file,
-        position: {
-          x: dropPosition.x + index * 20,
-          y: dropPosition.y + index * 20,
-        },
-      }));
-
-      setDroppedFiles((prev) => [...prev, ...newFiles]);
+      acceptedFiles.forEach((file, index) => {
+        create({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          position: {
+            x: dropPosition.x + index * 20,
+            y: dropPosition.y + index * 20,
+          },
+        });
+      });
     },
-    [],
+    [create],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -53,7 +64,7 @@ export const FileUpload: React.FC = () => {
     if (e.target === containerRef.current) setSelectedFileId(null);
   };
 
-  const handleFileClick = (fileId: string, e: React.MouseEvent) => {
+  const handleFileClick = (fileId: Id<"files">, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedFileId(fileId === selectedFileId ? null : fileId);
   };
@@ -67,16 +78,18 @@ export const FileUpload: React.FC = () => {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
-    const newFiles = files.map((file, index) => ({
-      id: crypto.randomUUID(),
-      file,
-      position: {
-        x: centerX + index * 20,
-        y: centerY + index * 20,
-      },
-    }));
+    files.forEach((file, index) => {
+      create({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        position: {
+          x: centerX + index * 20,
+          y: centerY + index * 20,
+        },
+      });
+    });
 
-    setDroppedFiles((prev) => [...prev, ...newFiles]);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -101,25 +114,22 @@ export const FileUpload: React.FC = () => {
         onChange={handleFileInputChange}
       />
 
-      {unselectedFiles.map((droppedFile) => (
+      {unselectedFiles.map((file) => (
         <UnselectedItem
-          key={droppedFile.id}
-          droppedFile={droppedFile}
-          onClick={(e) => handleFileClick(droppedFile.id, e)}
+          key={file._id}
+          file={file}
+          onClick={(e) => handleFileClick(file._id, e)}
         />
       ))}
 
       {selectedFileId && (
         <SelectedItem
-          droppedFile={droppedFiles.find((file) => file.id === selectedFileId)!}
+          file={files.find((file) => file._id === selectedFileId)!}
           onDragEnd={(newPosition) => {
-            setDroppedFiles((prev) =>
-              prev.map((file) =>
-                file.id === selectedFileId
-                  ? { ...file, position: newPosition }
-                  : file,
-              ),
-            );
+            updatePosition({
+              id: selectedFileId,
+              position: newPosition,
+            });
           }}
         />
       )}
