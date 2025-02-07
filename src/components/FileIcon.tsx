@@ -3,20 +3,38 @@ import * as React from "react";
 type FileIconProps = {
   file: File;
   position: { x: number; y: number };
+  isSelected: boolean;
+  onClick: (e: React.MouseEvent) => void;
 };
 
-export const FileIcon: React.FC<FileIconProps> = ({ file, position }) => {
+export const FileIcon: React.FC<FileIconProps> = ({
+  file,
+  position,
+  isSelected,
+  onClick,
+}) => {
   return (
     <div
-      className="absolute flex flex-col items-center gap-1"
+      className="absolute flex flex-col items-center gap-1 cursor-pointer pointer-events-none"
       style={{
         left: position.x - 20, // Center the icon on drop position
         top: position.y - 20,
       }}
     >
-      <div className="w-10 h-10 bg-white rounded-lg shadow-sm border flex items-center justify-center">
+      <div
+        className={`
+          w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center
+          transition-all duration-200 pointer-events-auto
+          ${
+            isSelected
+              ? "bg-blue-50 border-blue-400 ring-2 ring-blue-400 ring-opacity-50"
+              : "bg-white hover:bg-gray-50"
+          }
+        `}
+        onClick={onClick}
+      >
         <svg
-          className="w-6 h-6 text-gray-400"
+          className={`w-6 h-6 ${isSelected ? "text-blue-400" : "text-gray-400"}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -29,7 +47,13 @@ export const FileIcon: React.FC<FileIconProps> = ({ file, position }) => {
           />
         </svg>
       </div>
-      <span className="text-xs text-gray-600 max-w-[100px] truncate">
+      <span
+        className={`
+          text-xs max-w-[100px] truncate pointer-events-auto
+          ${isSelected ? "text-blue-500" : "text-gray-600"}
+        `}
+        onClick={onClick}
+      >
         {file.name}
       </span>
     </div>

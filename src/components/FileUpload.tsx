@@ -1,7 +1,10 @@
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { FileIcon } from "./FileIcon";
+import { SelectFilesButton } from "./SelectFilesButton";
+import { DropZoneOverlay } from "./DropZoneOverlay";
+import { EmptyState } from "./EmptyState";
 
 type DroppedFile = {
   file: File;
@@ -10,15 +13,23 @@ type DroppedFile = {
 
 export const FileUpload: React.FC = () => {
   const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
+  const [selectedFileIndex, setSelectedFileIndex] = useState<number | null>(
+    null,
+  );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const hasFiles = droppedFiles.length > 0;
 
   const onDrop = useCallback(
     (acceptedFiles: File[], event: React.DragEvent) => {
       const dropPosition = { x: event.pageX, y: event.pageY };
+      setSelectedFileIndex(null);
 
       const newFiles = acceptedFiles.map((file, index) => ({
         file,
         position: {
-          x: dropPosition.x + index * 20, // Offset each file slightly
+          x: dropPosition.x + index * 20,
           y: dropPosition.y + index * 20,
         },
       }));
@@ -30,57 +41,73 @@ export const FileUpload: React.FC = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (files, _, event) => onDrop(files, event as React.DragEvent),
+    noClick: true,
   });
+
+  const handleContainerClick = (e: React.MouseEvent) => {
+    if (e.target === containerRef.current) setSelectedFileIndex(null);
+  };
+
+  const handleFileClick = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedFileIndex(index === selectedFileIndex ? null : index);
+  };
+
+  const handleSelectFilesClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const newFiles = files.map((file, index) => ({
+      file,
+      position: {
+        x: centerX + index * 20,
+        y: centerY + index * 20,
+      },
+    }));
+
+    setDroppedFiles((prev) => [...prev, ...newFiles]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   return (
     <div
       {...getRootProps()}
+      ref={containerRef}
+      onClick={handleContainerClick}
       className={`
-        min-h-screen pt-20 flex items-center justify-center
+        min-h-screen pt-20 flex items-center justify-center relative
         ${isDragActive ? "bg-blue-50" : "bg-gray-50"}
         transition-colors duration-200 ease-in-out
       `}
     >
-      <input {...getInputProps()} />
+      <SelectFilesButton onClick={handleSelectFilesClick} />
 
-      <div
-        className={`
-        w-96 aspect-square
-        border-2 border-dashed rounded-lg
-        ${isDragActive ? "border-blue-400 bg-white/80" : "border-gray-200 bg-white/50"}
-        flex flex-col items-center justify-center gap-3
-        p-8
-      `}
-      >
-        <svg
-          className={`w-10 h-10 ${isDragActive ? "text-blue-400" : "text-gray-300"}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-          />
-        </svg>
-        <p
-          className={`text-sm ${isDragActive ? "text-blue-400" : "text-gray-400"}`}
-        >
-          {isDragActive
-            ? "Drop files here..."
-            : "Drag and drop files anywhere, or click to select"}
-        </p>
-      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={handleFileInputChange}
+      />
 
       {droppedFiles.map((droppedFile, index) => (
         <FileIcon
           key={`${droppedFile.file.name}-${index}`}
           file={droppedFile.file}
           position={droppedFile.position}
+          isSelected={index === selectedFileIndex}
+          onClick={(e) => handleFileClick(index, e)}
         />
       ))}
+
+      {hasFiles ? null : <EmptyState />}
+
+      {isDragActive && <DropZoneOverlay />}
     </div>
   );
 };
