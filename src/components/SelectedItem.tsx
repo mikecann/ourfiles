@@ -13,10 +13,21 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
+  const [mouseOffset, setMouseOffset] = React.useState({ x: 0, y: 0 });
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
-    setDragPosition({ x: e.clientX, y: e.clientY });
+
+    // Calculate offset between mouse position and element position
+    const rect = (e.target as HTMLElement).getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+    setMouseOffset({ x: offsetX, y: offsetY });
+
+    setDragPosition({
+      x: e.clientX - offsetX + 20, // Add back the centering offset from FileIcon
+      y: e.clientY - offsetY + 20,
+    });
 
     // Create a transparent drag image
     const dragImage = new Image();
@@ -26,12 +37,20 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   };
 
   const handleDrag = (e: React.DragEvent) => {
-    if (e.clientX && e.clientY) setDragPosition({ x: e.clientX, y: e.clientY });
+    if (!e.clientX || !e.clientY) return;
+
+    setDragPosition({
+      x: e.clientX - mouseOffset.x + 20,
+      y: e.clientY - mouseOffset.y + 20,
+    });
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
     setIsDragging(false);
-    onDragEnd({ x: e.clientX, y: e.clientY });
+    onDragEnd({
+      x: e.clientX - mouseOffset.x + 20,
+      y: e.clientY - mouseOffset.y + 20,
+    });
   };
 
   return (
