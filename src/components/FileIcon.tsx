@@ -45,7 +45,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
       <div className="relative">
         <div
           className={`
-            w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center
+            w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center relative overflow-hidden
             transition-all duration-200
             ${
               isSelected
@@ -60,6 +60,14 @@ export const FileIcon: React.FC<FileIconProps> = ({
             type={file.type}
             className={isSelected ? "text-blue-400" : "text-gray-300"}
           />
+          {file.uploadState.kind === "uploading" && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-100">
+              <div
+                className="h-full bg-blue-500 transition-all duration-200"
+                style={{ width: `${file.uploadState.progress}%` }}
+              />
+            </div>
+          )}
         </div>
         <UploadStatusIndicator file={file} />
       </div>

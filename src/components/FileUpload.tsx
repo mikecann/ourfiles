@@ -62,17 +62,33 @@ export const FileUpload: React.FC = () => {
 
       // Then generate upload URL and upload the file
       const uploadUrl = await generateUploadUrl();
-      const result = await fetch(uploadUrl, {
-        method: "POST",
-        headers: { "Content-Type": file.type },
-        body: file,
+
+      // Create a promise that resolves when the upload is complete
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", uploadUrl);
+        xhr.setRequestHeader("Content-Type", file.type);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const progress = Math.round((event.loaded / event.total) * 100);
+            void updateUploadProgress({ id: fileId, progress });
+          }
+        };
+
+        xhr.onload = async () => {
+          if (xhr.status === 200) {
+            const { storageId } = JSON.parse(xhr.responseText);
+            await completeUpload({ id: fileId, storageId });
+            resolve(undefined);
+          } else {
+            reject(new Error(`Upload failed with status ${xhr.status}`));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error("Upload failed"));
+        xhr.send(file);
       });
-
-      if (!result.ok)
-        throw new Error(`Upload failed with status ${result.status}`);
-
-      const { storageId } = await result.json();
-      await completeUpload({ id: fileId, storageId });
     } catch (error) {
       console.error("Upload failed:", error);
     }
