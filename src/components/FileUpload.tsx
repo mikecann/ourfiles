@@ -69,10 +69,15 @@ export const FileUpload: React.FC = () => {
         xhr.open("POST", uploadUrl);
         xhr.setRequestHeader("Content-Type", file.type);
 
+        let lastUpdate = 0;
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
-            const progress = Math.round((event.loaded / event.total) * 100);
-            void updateUploadProgress({ id: fileId, progress });
+            const now = Date.now();
+            if (now - lastUpdate >= 1000) {
+              const progress = Math.round((event.loaded / event.total) * 100);
+              void updateUploadProgress({ id: fileId, progress });
+              lastUpdate = now;
+            }
           }
         };
 
