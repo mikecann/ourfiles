@@ -3,7 +3,7 @@ import { useCallback, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { SelectedItem } from "./SelectedItem";
 import { UnselectedItem } from "./UnselectedItem";
-import { SelectFilesButton } from "./SelectFilesButton";
+import { AddFiles } from "./SelectFilesButton";
 import { DropZoneOverlay } from "./DropZoneOverlay";
 import { EmptyState } from "./EmptyState";
 import { SelectionBox } from "./SelectionBox";
@@ -229,7 +229,7 @@ export const FileUpload: React.FC = () => {
         transition-colors duration-200 ease-in-out
       `}
     >
-      <SelectFilesButton onClick={handleSelectFilesClick} />
+      <AddFiles onClick={handleSelectFilesClick} />
 
       <input
         ref={fileInputRef}
