@@ -4,13 +4,11 @@ import type { DroppedFile } from "./FileUpload";
 
 type SelectedItemProps = {
   droppedFile: DroppedFile;
-  onClick: (e: React.MouseEvent) => void;
   onDragEnd: (newPosition: { x: number; y: number }) => void;
 };
 
 export const SelectedItem: React.FC<SelectedItemProps> = ({
   droppedFile,
-  onClick,
   onDragEnd,
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
@@ -42,7 +40,6 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         file={droppedFile.file}
         position={droppedFile.position}
         isSelected={true}
-        onClick={onClick}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}

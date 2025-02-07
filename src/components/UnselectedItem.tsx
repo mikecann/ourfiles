@@ -15,7 +15,7 @@ export const UnselectedItem: React.FC<UnselectedItemProps> = ({
     <FileIcon
       file={droppedFile.file}
       position={droppedFile.position}
-      onClick={onClick}
+      onMouseDown={onClick}
       isSelected={false}
     />
   );

@@ -5,6 +5,7 @@ type FileIconProps = {
   position: { x: number; y: number };
   isSelected: boolean;
   onClick?: (e: React.MouseEvent) => void;
+  onMouseDown?: (e: React.MouseEvent) => void;
   style?: React.CSSProperties;
   onDragStart?: (e: React.DragEvent) => void;
   onDrag?: (e: React.DragEvent) => void;
@@ -16,6 +17,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
   position,
   isSelected,
   onClick,
+  onMouseDown,
   style,
   onDragStart,
   onDrag,
@@ -45,6 +47,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
           }
         `}
         onClick={onClick}
+        onMouseDown={onMouseDown}
       >
         <svg
           className={`w-6 h-6 ${isSelected ? "text-blue-400" : "text-gray-400"}`}
@@ -66,6 +69,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
           ${isSelected ? "text-blue-500" : "text-gray-600"}
         `}
         onClick={onClick}
+        onMouseDown={onMouseDown}
       >
         {file.name}
       </span>
