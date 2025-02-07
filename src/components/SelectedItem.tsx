@@ -21,6 +21,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
 }) => {
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
   const [mouseOffset, setMouseOffset] = React.useState({ x: 0, y: 0 });
+  const [isInternalDragging, setIsInternalDragging] = React.useState(false);
   const {
     isDragging,
     handleDragStart: handleExternalDragStart,
@@ -28,6 +29,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   } = useFileDownloadDrag({ file });
 
   const handleDragStart = (e: React.DragEvent) => {
+    setIsInternalDragging(true);
     // Calculate offset between mouse position and element position
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     const offsetX = e.clientX - rect.left;
@@ -59,6 +61,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
+    setIsInternalDragging(false);
     handleExternalDragEnd();
     // Only update position if dropped inside the window
     if (
@@ -95,9 +98,12 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           ) : undefined
         }
       />
-      {isDragging && (
+      {isInternalDragging && (
         <FileIcon
-          file={file}
+          file={{
+            ...file,
+            position: dragPosition,
+          }}
           isSelected={true}
           style={{ opacity: 0.5, pointerEvents: "none" }}
         />
