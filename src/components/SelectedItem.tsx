@@ -3,6 +3,7 @@ import { FileIcon } from "./FileIcon";
 import { FileTooltip } from "./FileTooltip";
 import { Doc } from "../../convex/_generated/dataModel";
 import { useFileDownloadDrag } from "../hooks/useFileDownloadDrag";
+import { MultiFileDownloadDialog } from "./MultiFileDownloadDialog";
 
 type SelectedItemProps = {
   file: Doc<"files">;
@@ -29,6 +30,10 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     handleDragStart: handleExternalDragStart,
     handleDragEnd: handleExternalDragEnd,
     canDownload,
+    showDownloadDialog,
+    setShowDownloadDialog,
+    downloadMultipleFiles,
+    fileCount,
   } = useFileDownloadDrag({
     files: allSelectedFiles.length > 1 ? allSelectedFiles : [file],
     singleFile: allSelectedFiles.length === 1,
@@ -92,6 +97,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
+        draggable={canDownload}
         tooltip={
           !disableTooltip && !isDragging ? (
             <FileTooltip
@@ -115,6 +121,13 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           style={{ opacity: 0.5, pointerEvents: "none" }}
         />
       )}
+
+      <MultiFileDownloadDialog
+        open={showDownloadDialog}
+        onOpenChange={setShowDownloadDialog}
+        onConfirm={downloadMultipleFiles}
+        fileCount={fileCount}
+      />
     </>
   );
 };
