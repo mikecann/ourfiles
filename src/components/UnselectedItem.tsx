@@ -1,9 +1,9 @@
 import * as React from "react";
 import { FileIcon } from "./FileIcon";
-import type { ConvexFile } from "./FileUpload";
+import { Doc } from "../../convex/_generated/dataModel";
 
 type UnselectedItemProps = {
-  file: ConvexFile;
+  file: Doc<"files">;
   onClick: (e: React.MouseEvent) => void;
 };
 

@@ -1,13 +1,20 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
+import { Doc, Id } from "./_generated/dataModel";
 
-export const list = query(async (ctx) => {
-  return await ctx.db.query("files").collect();
+export const list = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("files").collect();
+  },
 });
 
-export const generateUploadUrl = mutation(async (ctx) => {
-  return await ctx.storage.generateUploadUrl();
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
 });
 
 export const create = mutation({

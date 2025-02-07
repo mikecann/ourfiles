@@ -6,18 +6,13 @@ import { UnselectedItem } from "./UnselectedItem";
 import { SelectFilesButton } from "./SelectFilesButton";
 import { DropZoneOverlay } from "./DropZoneOverlay";
 import { EmptyState } from "./EmptyState";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
-
-export type ConvexFile = {
-  _id: Id<"files">;
-  _creationTime: number;
-  name: string;
-  size: number;
-  type: string;
-  position: { x: number; y: number };
-};
+import {
+  useOptimisticCreateFile,
+  useOptimisticUpdateFilePosition,
+} from "../hooks/useOptimisticFiles";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export const FileUpload: React.FC = () => {
   const [selectedFileId, setSelectedFileId] = useState<Id<"files"> | null>(
@@ -27,9 +22,8 @@ export const FileUpload: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const files = useQuery(api.files.list) ?? [];
-  const create = useMutation(api.files.create);
-  const updatePosition = useMutation(api.files.updatePosition);
-  const remove = useMutation(api.files.remove);
+  const createFile = useOptimisticCreateFile();
+  const updateFilePosition = useOptimisticUpdateFilePosition();
 
   const hasFiles = files.length > 0;
 
@@ -41,7 +35,7 @@ export const FileUpload: React.FC = () => {
       setSelectedFileId(null);
 
       acceptedFiles.forEach((file, index) => {
-        create({
+        createFile({
           name: file.name,
           size: file.size,
           type: file.type,
@@ -52,10 +46,10 @@ export const FileUpload: React.FC = () => {
         });
       });
     },
-    [create],
+    [createFile],
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, isDragActive } = useDropzone({
     onDrop: (files, _, event) => onDrop(files, event as React.DragEvent),
     noClick: true,
   });
@@ -79,7 +73,7 @@ export const FileUpload: React.FC = () => {
     const centerY = window.innerHeight / 2;
 
     files.forEach((file, index) => {
-      create({
+      createFile({
         name: file.name,
         size: file.size,
         type: file.type,
@@ -126,7 +120,7 @@ export const FileUpload: React.FC = () => {
         <SelectedItem
           file={files.find((file) => file._id === selectedFileId)!}
           onDragEnd={(newPosition) => {
-            updatePosition({
+            updateFilePosition({
               id: selectedFileId,
               position: newPosition,
             });

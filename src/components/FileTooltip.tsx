@@ -6,11 +6,7 @@ type FileTooltipProps = {
   type: string;
 };
 
-export const FileTooltip: React.FC<FileTooltipProps> = ({
-  name,
-  size,
-  type,
-}) => {
+export const FileTooltip: React.FC<FileTooltipProps> = ({ size, type }) => {
   return (
     <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-none flex flex-col items-center animate-popIn">
       <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[200px]">

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { FileIcon } from "./FileIcon";
 import { FileTooltip } from "./FileTooltip";
-import type { ConvexFile } from "./FileUpload";
+import { Doc } from "../../convex/_generated/dataModel";
 
 type SelectedItemProps = {
-  file: ConvexFile;
+  file: Doc<"files">;
   onDragEnd: (newPosition: { x: number; y: number }) => void;
 };
 
