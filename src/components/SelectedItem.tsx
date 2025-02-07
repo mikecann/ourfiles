@@ -57,7 +57,6 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   }, [allSelectedFiles, file]);
 
   const handleDragStart = (e: React.DragEvent) => {
-    if (!canDownload) return;
     setIsInternalDragging(true);
     // Calculate offset between mouse position and element position
     const rect = (e.target as HTMLElement).getBoundingClientRect();
@@ -71,8 +70,10 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     };
     setDragPosition(newPosition);
 
-    // Handle external drag and drop
-    handleExternalDragStart(e);
+    // Only handle external drag if file is uploaded
+    if (canDownload) {
+      handleExternalDragStart(e);
+    }
 
     // Create a transparent drag image
     const dragImage = new Image();
@@ -138,7 +139,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
-        draggable={canDownload}
+        draggable={true}
         tooltip={
           !disableTooltip && !isDragging ? (
             <FileTooltip
