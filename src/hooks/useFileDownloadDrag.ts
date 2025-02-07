@@ -116,13 +116,6 @@ export function useFileDownloadDrag({
           "DownloadURL",
           `${file.type}:${file.name}:${file.uploadState.url}`,
         );
-
-        // Show only success toast when drag ends
-        const handleDragEnd = () => {
-          toast.success(`Downloaded ${file.name}`);
-          window.removeEventListener("dragend", handleDragEnd);
-        };
-        window.addEventListener("dragend", handleDragEnd, { once: true });
       }
       return;
     }

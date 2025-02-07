@@ -4,6 +4,7 @@ import { FileTooltip } from "./FileTooltip";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useFileDownloadDrag } from "../hooks/useFileDownloadDrag";
 import { MultiFileDownloadDialog } from "./MultiFileDownloadDialog";
+import { toast } from "sonner";
 
 type SelectedItemProps = {
   file: Doc<"files">;
@@ -92,8 +93,8 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
 
   const handleDragEnd = (e: React.DragEvent) => {
     setIsInternalDragging(false);
-    handleExternalDragEnd();
-    // Only update position if dropped inside the window
+
+    // If dropped inside the window, update positions
     if (
       e.clientX > 0 &&
       e.clientY > 0 &&
@@ -118,6 +119,13 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           })),
         ];
       onDragEnd(updates);
+    } else {
+      // Only handle external drag end when dropping outside the window
+      handleExternalDragEnd();
+      // Show download toast only when dragging outside
+      if (allSelectedFiles.length === 1) {
+        toast.success(`Downloaded ${file.name}`);
+      }
     }
   };
 
