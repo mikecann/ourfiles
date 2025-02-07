@@ -1,12 +1,14 @@
 import * as React from "react";
 import { useCallback, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
-import { FileIcon } from "./FileIcon";
+import { SelectedItem } from "./SelectedItem";
+import { UnselectedItem } from "./UnselectedItem";
 import { SelectFilesButton } from "./SelectFilesButton";
 import { DropZoneOverlay } from "./DropZoneOverlay";
 import { EmptyState } from "./EmptyState";
 
-type DroppedFile = {
+export type DroppedFile = {
+  id: string;
   file: File;
   position: { x: number; y: number };
 };
@@ -21,12 +23,17 @@ export const FileUpload: React.FC = () => {
 
   const hasFiles = droppedFiles.length > 0;
 
+  const unselectedFiles = droppedFiles.filter(
+    (_, index) => index !== selectedFileIndex,
+  );
+
   const onDrop = useCallback(
     (acceptedFiles: File[], event: React.DragEvent) => {
       const dropPosition = { x: event.pageX, y: event.pageY };
       setSelectedFileIndex(null);
 
       const newFiles = acceptedFiles.map((file, index) => ({
+        id: crypto.randomUUID(),
         file,
         position: {
           x: dropPosition.x + index * 20,
@@ -63,6 +70,7 @@ export const FileUpload: React.FC = () => {
     const centerY = window.innerHeight / 2;
 
     const newFiles = files.map((file, index) => ({
+      id: crypto.randomUUID(),
       file,
       position: {
         x: centerX + index * 20,
@@ -95,15 +103,20 @@ export const FileUpload: React.FC = () => {
         onChange={handleFileInputChange}
       />
 
-      {droppedFiles.map((droppedFile, index) => (
-        <FileIcon
-          key={`${droppedFile.file.name}-${index}`}
-          file={droppedFile.file}
-          position={droppedFile.position}
-          isSelected={index === selectedFileIndex}
-          onClick={(e) => handleFileClick(index, e)}
+      {unselectedFiles.map((droppedFile) => (
+        <UnselectedItem
+          key={droppedFile.id}
+          droppedFile={droppedFile}
+          onClick={(e) => handleFileClick(droppedFiles.indexOf(droppedFile), e)}
         />
       ))}
+
+      {selectedFileIndex !== null && (
+        <SelectedItem
+          droppedFile={droppedFiles[selectedFileIndex]}
+          onClick={(e) => handleFileClick(selectedFileIndex, e)}
+        />
+      )}
 
       {hasFiles ? null : <EmptyState />}
 
