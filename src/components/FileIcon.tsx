@@ -25,7 +25,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
 }) => {
   return (
     <div
-      className="absolute flex flex-col items-center gap-1 cursor-pointer pointer-events-none select-none"
+      className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto"
       style={{
         left: position.x - 20, // Center the icon on drop position
         top: position.y - 20,
@@ -39,7 +39,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
       <div
         className={`
           w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center
-          transition-all duration-200 pointer-events-auto
+          transition-all duration-200
           ${
             isSelected
               ? "bg-blue-50 border-blue-400 ring-2 ring-blue-400 ring-opacity-50"
@@ -65,7 +65,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
       </div>
       <span
         className={`
-          text-xs max-w-[100px] truncate pointer-events-auto
+          text-xs max-w-[100px] truncate
           ${isSelected ? "text-blue-500" : "text-gray-600"}
         `}
         onClick={onClick}
