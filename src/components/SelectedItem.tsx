@@ -8,12 +8,16 @@ type SelectedItemProps = {
   file: Doc<"files">;
   onDragEnd: (newPosition: { x: number; y: number }) => void;
   onDelete?: () => void;
+  onClick: (e: React.MouseEvent) => void;
+  disableTooltip?: boolean;
 };
 
 export const SelectedItem: React.FC<SelectedItemProps> = ({
   file,
   onDragEnd,
   onDelete,
+  disableTooltip,
+  onClick,
 }) => {
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
   const [mouseOffset, setMouseOffset] = React.useState({ x: 0, y: 0 });
@@ -74,11 +78,12 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
       <FileIcon
         file={file}
         isSelected={true}
+        onClick={onClick}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
         tooltip={
-          isDragging ? undefined : (
+          !disableTooltip && !isDragging ? (
             <FileTooltip
               key={file._id}
               fileId={file._id}
@@ -87,7 +92,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
               type={file.type}
               onDelete={onDelete}
             />
-          )
+          ) : undefined
         }
       />
       {isDragging && (

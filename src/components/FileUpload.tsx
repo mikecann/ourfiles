@@ -255,6 +255,8 @@ export const FileUpload: React.FC = () => {
             });
           }}
           onDelete={() => setSelectedFileIds(new Set())}
+          onClick={(e) => handleFileClick(file._id, e)}
+          disableTooltip={selectedFiles.length > 1}
         />
       ))}
 
