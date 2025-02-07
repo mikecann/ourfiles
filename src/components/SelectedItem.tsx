@@ -6,11 +6,13 @@ import { Doc } from "../../convex/_generated/dataModel";
 type SelectedItemProps = {
   file: Doc<"files">;
   onDragEnd: (newPosition: { x: number; y: number }) => void;
+  onDelete?: () => void;
 };
 
 export const SelectedItem: React.FC<SelectedItemProps> = ({
   file,
   onDragEnd,
+  onDelete,
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
@@ -66,9 +68,11 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           isDragging ? undefined : (
             <FileTooltip
               key={file._id}
+              fileId={file._id}
               name={file.name}
               size={file.size}
               type={file.type}
+              onDelete={onDelete}
             />
           )
         }

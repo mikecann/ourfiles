@@ -15,7 +15,6 @@ export const UploadStatusIndicator: React.FC<{ file: Doc<"files"> }> = ({
     width: 16,
     height: 16,
     borderRadius: 8,
-    zIndex: 10,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

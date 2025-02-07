@@ -194,6 +194,7 @@ export const FileUpload: React.FC = () => {
               position: newPosition,
             });
           }}
+          onDelete={() => setSelectedFileId(null)}
         />
       )}
 
