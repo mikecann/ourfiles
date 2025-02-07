@@ -45,7 +45,9 @@ export function useOptimisticRemoveFile() {
       const existingFiles = localStore.getQuery(api.files.list, {});
       if (existingFiles === undefined) return;
 
-      const updatedFiles = existingFiles.filter((file) => file._id !== args.id);
+      const updatedFiles = existingFiles.filter(
+        (file) => !args.ids.includes(file._id),
+      );
       localStore.setQuery(api.files.list, {}, updatedFiles);
     },
   );

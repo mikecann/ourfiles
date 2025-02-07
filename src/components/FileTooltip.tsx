@@ -23,7 +23,7 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
   const handleDelete = () => {
-    removeFile({ id: fileId });
+    removeFile({ ids: [fileId] });
     setShowDeleteDialog(false);
     onDelete?.();
   };
@@ -69,6 +69,7 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
       </div>
 
       <DeleteFileDialog
+        fileCount={1}
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         onConfirm={handleDelete}

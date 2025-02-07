@@ -205,9 +205,7 @@ export const FileUpload: React.FC = () => {
   }, [handleKeyDown]);
 
   const handleConfirmDelete = () => {
-    for (const fileId of selectedFileIds) {
-      removeFile({ id: fileId });
-    }
+    removeFile({ ids: Array.from(selectedFileIds) });
     setSelectedFileIds(new Set());
     setShowDeleteConfirm(false);
   };
@@ -272,6 +270,7 @@ export const FileUpload: React.FC = () => {
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}
         onConfirm={handleConfirmDelete}
+        fileCount={selectedFileIds.size}
       />
     </div>
   );

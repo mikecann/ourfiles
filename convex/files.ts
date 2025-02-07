@@ -51,11 +51,13 @@ export const updatePosition = mutation({
 });
 
 export const remove = mutation({
-  args: { id: v.id("files") },
-  handler: async (ctx, { id }) => {
-    const file = await ctx.db.get(id);
-    if (!file) throw new ConvexError("File not found");
-    await ctx.db.delete(id);
+  args: { ids: v.array(v.id("files")) },
+  handler: async (ctx, { ids }) => {
+    for (const id of ids) {
+      const file = await ctx.db.get(id);
+      if (!file) throw new ConvexError(`File ${id} not found`);
+      await ctx.db.delete(id);
+    }
   },
 });
 
