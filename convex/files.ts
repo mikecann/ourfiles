@@ -66,13 +66,9 @@ export const remove = mutation({
       const file = await ctx.db.get(id);
       if (!file) throw new ConvexError(`File ${id} not found`);
 
-      // Delete from storage if file is uploading or uploaded
-      if (
-        file.uploadState.kind === "uploading" ||
-        file.uploadState.kind === "uploaded"
-      ) {
-        const storageId = file.uploadState.storageId;
-        await ctx.storage.delete(storageId);
+      // Delete from storage if file is uploaded
+      if (file.uploadState.kind === "uploaded") {
+        await ctx.storage.delete(file.uploadState.storageId);
       }
 
       await ctx.db.delete(id);
@@ -83,9 +79,8 @@ export const remove = mutation({
 export const startUpload = mutation({
   args: {
     id: v.id("files"),
-    storageId: v.id("_storage"),
   },
-  handler: async (ctx, { id, storageId }) => {
+  handler: async (ctx, { id }) => {
     const file = await ctx.db.get(id);
     if (!file) throw new ConvexError("File not found");
 
@@ -93,7 +88,6 @@ export const startUpload = mutation({
       uploadState: {
         kind: "uploading",
         progress: 0,
-        storageId,
       },
     });
   },
@@ -122,20 +116,21 @@ export const updateUploadProgress = mutation({
 export const completeUpload = mutation({
   args: {
     id: v.id("files"),
+    storageId: v.id("_storage"),
   },
-  handler: async (ctx, { id }) => {
+  handler: async (ctx, { id, storageId }) => {
     const file = await ctx.db.get(id);
     if (!file) throw new ConvexError("File not found");
     if (file.uploadState.kind !== "uploading")
       throw new ConvexError("File is not in uploading state");
 
-    const url = await ctx.storage.getUrl(file.uploadState.storageId);
+    const url = await ctx.storage.getUrl(storageId);
     if (!url) throw new ConvexError("Failed to get download URL");
 
     return await ctx.db.patch(id, {
       uploadState: {
         kind: "uploaded",
-        storageId: file.uploadState.storageId,
+        storageId,
         url,
       },
     });

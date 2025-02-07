@@ -57,6 +57,10 @@ export const FileUpload: React.FC = () => {
 
   const handleFileUpload = async (file: File, fileId: Id<"files">) => {
     try {
+      // First mark the file as uploading
+      await startUpload({ id: fileId });
+
+      // Then generate upload URL and upload the file
       const uploadUrl = await generateUploadUrl();
       const result = await fetch(uploadUrl, {
         method: "POST",
@@ -68,8 +72,7 @@ export const FileUpload: React.FC = () => {
         throw new Error(`Upload failed with status ${result.status}`);
 
       const { storageId } = await result.json();
-      await startUpload({ id: fileId, storageId });
-      await completeUpload({ id: fileId });
+      await completeUpload({ id: fileId, storageId });
     } catch (error) {
       console.error("Upload failed:", error);
     }
