@@ -1,20 +1,16 @@
 import * as React from "react";
-import { Button } from "./ui/button";
-import { LayoutDashboard } from "lucide-react";
+import { MainMenu } from "./MainMenu";
 
-interface Props {
+type TopRightItemsProps = {
   onDashboardClick: () => void;
-}
+};
 
-export const TopRightItems: React.FC<Props> = ({ onDashboardClick }) => {
+export const TopRightItems: React.FC<TopRightItemsProps> = ({
+  onDashboardClick,
+}) => {
   return (
-    <Button
-      variant="outline"
-      onClick={onDashboardClick}
-      className="fixed top-4 right-4 text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-50"
-    >
-      <LayoutDashboard className="w-4 h-4 mr-2" />
-      Dashboard
-    </Button>
+    <div className="fixed top-4 right-4 flex items-center gap-2">
+      <MainMenu onDashboardClick={onDashboardClick} />
+    </div>
   );
 };

@@ -4,6 +4,7 @@ import { Trash2, Upload, Check, Clock, Download, XCircle } from "lucide-react";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useOptimisticRemoveFile } from "../hooks/useOptimisticFiles";
 import { DeleteFileDialog } from "./DeleteFileDialog";
+import { formatFileSize } from "../utils/formatters";
 
 type FilePreviewProps = {
   type: string;
@@ -132,7 +133,7 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
                   PROPERTIES
                 </div>
                 <div className="text-gray-600">
-                  Size: {(size / 1024).toFixed(1)} KB
+                  Size: {formatFileSize(size)}
                 </div>
                 <div className="text-gray-600">Type: {type || "Unknown"}</div>
               </div>

@@ -159,8 +159,7 @@ export const FileUpload: React.FC = () => {
   };
 
   const handleDashboardClick = () => {
-    // TODO: Implement dashboard functionality
-    console.log("Opening dashboard...");
+    window.open(import.meta.env.VITE_CONVEX_DASHBOARD_URL, "_blank");
   };
 
   return (
@@ -216,14 +215,7 @@ export const FileUpload: React.FC = () => {
           <MultiSelectOverlay files={selectedFiles} />
         )}
 
-        {hasFiles ? (
-          <div className="fixed bottom-4 left-4 text-sm text-gray-400 select-none pointer-events-none flex items-center gap-2">
-            <HelpCircle className="w-4 h-4" />
-            Drag files in and out to upload and download
-          </div>
-        ) : (
-          <EmptyState />
-        )}
+        {hasFiles ? null : <EmptyState />}
 
         {isDragActive && <DropZoneOverlay />}
 

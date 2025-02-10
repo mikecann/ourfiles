@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Doc } from "../../convex/_generated/dataModel";
+import { formatFileSize } from "../utils/formatters";
 
 type MultiSelectOverlayProps = {
   files: Doc<"files">[];
@@ -40,17 +41,12 @@ export const MultiSelectOverlay: React.FC<MultiSelectOverlayProps> = ({
   if (!bounds || files.length <= 1) return null;
 
   const totalSize = files.reduce((sum, file) => sum + file.size, 0);
-  const formatSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
 
   return (
     <>
       {/* Dotted selection box */}
       <div
-        className="absolute border-2 border-dashed border-blue-400 rounded-lg pointer-events-none"
+        className="absolute border-2 border-dashed border-blue-300 rounded-lg pointer-events-none select-none"
         style={{
           left: bounds.left,
           top: bounds.top,
@@ -60,7 +56,7 @@ export const MultiSelectOverlay: React.FC<MultiSelectOverlayProps> = ({
       />
       {/* Multi-select tooltip */}
       <div
-        className="absolute bg-white rounded-lg shadow-lg p-2 border text-sm pointer-events-none"
+        className="absolute bg-white rounded-lg shadow-lg p-2 border text-sm pointer-events-none select-none"
         style={{
           left: bounds.left + bounds.width / 2,
           top: bounds.top - 10,
@@ -68,11 +64,11 @@ export const MultiSelectOverlay: React.FC<MultiSelectOverlayProps> = ({
         }}
       >
         <div className="flex flex-col items-center">
-          <div className="font-medium text-gray-600">
+          <div className="font-medium text-gray-600 select-none">
             {files.length} {files.length === 1 ? "file" : "files"} selected
           </div>
           <div className="text-gray-500 text-xs">
-            Total size: {formatSize(totalSize)}
+            Total size: {formatFileSize(totalSize)}
           </div>
         </div>
       </div>
