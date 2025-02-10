@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Droplet shape -->
+  <path 
+    d="M256 128C256 128 352 256 352 320C352 394.667 309.333 416 256 416C202.667 416 160 394.667 160 320C160 256 256 128 256 128Z" 
+    fill="url(#droplet-gradient)"
+  />
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="droplet-gradient" x1="160" y1="128" x2="352" y2="416" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+</svg> 

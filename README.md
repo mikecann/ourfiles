@@ -1,6 +1,6 @@
-# NASvex
+# Dropvex
 
-A simple, private storgage solution that uses Convex..
+A modern file storage system powered by Convex.
 
 Simply drag and drop files onto the inteface to add files, then download them on another device.
 
