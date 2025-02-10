@@ -141,7 +141,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onDragEnd={handleDragEnd}
         draggable={true}
         tooltip={
-          !disableTooltip && !isDragging ? (
+          !disableTooltip && !isDragging && !isInternalDragging ? (
             <FileTooltip
               key={file._id}
               fileId={file._id}
