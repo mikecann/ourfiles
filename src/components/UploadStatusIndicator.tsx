@@ -1,8 +1,6 @@
 import * as React from "react";
 import { Doc } from "../../convex/_generated/dataModel";
 
-type UploadState = Doc<"files">["uploadState"];
-
 export const UploadStatusIndicator: React.FC<{ file: Doc<"files"> }> = ({
   file,
 }) => {

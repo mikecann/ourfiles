@@ -18,7 +18,9 @@ export const useFileHandlers = () => {
   );
 
   const { getRootProps, isDragActive } = useDropzone({
-    onDrop: (files, _, event) => onDrop(files, event as React.DragEvent),
+    onDrop: (files, _, event) => {
+      void onDrop(files, event as React.DragEvent);
+    },
     noClick: true,
   });
 

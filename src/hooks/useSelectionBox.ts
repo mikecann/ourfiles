@@ -77,7 +77,7 @@ export const useSelectionBox = ({
       window.removeEventListener("mousemove", handleGlobalMouseMove);
       window.removeEventListener("mouseup", handleGlobalMouseUp);
     };
-  }, [isDragSelecting, selectionStart, files]);
+  }, [isDragSelecting, selectionStart, files, updateSelection]);
 
   return {
     isDragSelecting,

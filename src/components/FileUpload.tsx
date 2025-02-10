@@ -99,14 +99,14 @@ export const FileUpload: React.FC = () => {
           transition-colors duration-200 ease-in-out
         `}
       >
-        <TopRightItems onDashboardClick={handleDashboardClick} />
+        <TopRightItems />
 
         <input
           ref={fileInputRef}
           type="file"
           multiple
           className="hidden"
-          onChange={handleFileInputChange}
+          onChange={(e) => void handleFileInputChange(e)}
         />
 
         {unselectedFiles.map((file) => (
@@ -123,7 +123,7 @@ export const FileUpload: React.FC = () => {
             key={file._id}
             file={file}
             allSelectedFiles={selectedFiles}
-            onDragEnd={(updates) => updateFilePositions({ updates })}
+            onDragEnd={(updates) => void updateFilePositions({ updates })}
             onDelete={() => setSelectedFileIds(new Set())}
             onClick={(e) => handleFileClick(file._id, e)}
             disableTooltip={selectedFiles.length > 1 || isDragSelecting}

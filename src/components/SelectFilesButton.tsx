@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button } from "./ui/button";
-import { Plus, LayoutDashboard } from "lucide-react";
+import { Plus } from "lucide-react";
 
 type ActionButtonsProps = {
   onAddClick: () => void;

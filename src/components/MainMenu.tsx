@@ -10,11 +10,7 @@ import { Menu, ExternalLink, Settings } from "lucide-react";
 import SettingsDialog from "./SettingsDialog";
 import { useSettings } from "../contexts/SettingsContext";
 
-type MainMenuProps = {
-  onDashboardClick: () => void;
-};
-
-export const MainMenu: React.FC<MainMenuProps> = ({ onDashboardClick }) => {
+export const MainMenu: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const { settings } = useSettings();
 

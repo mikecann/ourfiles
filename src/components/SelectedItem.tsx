@@ -120,7 +120,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
       <MultiFileDownloadDialog
         open={showDownloadDialog}
         onOpenChange={setShowDownloadDialog}
-        onConfirm={downloadMultipleFiles}
+        onConfirm={() => void downloadMultipleFiles()}
         fileCount={fileCount}
       />
     </>
