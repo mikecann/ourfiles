@@ -33,7 +33,10 @@ export function useFileUploader() {
       await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", uploadUrl);
-        xhr.setRequestHeader("Content-Type", file.type);
+        xhr.setRequestHeader(
+          "Content-Type",
+          file.type || "application/octet-stream",
+        );
 
         let lastUpdate = 0;
         xhr.upload.onprogress = (event) => {
