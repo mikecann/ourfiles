@@ -173,3 +173,21 @@ export const updatePositions = mutation({
     );
   },
 });
+
+export const setErrorState = mutation({
+  args: {
+    id: v.id("files"),
+    message: v.string(),
+  },
+  handler: async (ctx, { id, message }) => {
+    const file = await ctx.db.get(id);
+    if (!file) throw new ConvexError("File not found");
+
+    return await ctx.db.patch(id, {
+      uploadState: {
+        kind: "errored",
+        message,
+      },
+    });
+  },
+});

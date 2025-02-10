@@ -23,6 +23,10 @@ export default defineSchema({
         storageId: v.id("_storage"),
         url: v.string(),
       }),
+      v.object({
+        kind: v.literal("errored"),
+        message: v.string(),
+      }),
     ),
   }),
 });

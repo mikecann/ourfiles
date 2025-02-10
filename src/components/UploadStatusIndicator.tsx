@@ -85,6 +85,31 @@ export const UploadStatusIndicator: React.FC<{ file: Doc<"files"> }> = ({
       </div>
     );
 
+  if (state.kind === "errored")
+    return (
+      <div
+        style={{
+          ...baseStyle,
+          background: "#ef4444", // red-500
+        }}
+      >
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 16 16"
+          fill="none"
+          style={{ color: "white" }}
+        >
+          <path
+            d="M4 4l8 8M4 12l8-8"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+    );
+
   if (state.kind === "uploaded")
     return (
       <div

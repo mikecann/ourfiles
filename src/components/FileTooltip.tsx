@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button } from "./ui/button";
-import { Trash2, Upload, Check, Clock, Download } from "lucide-react";
+import { Trash2, Upload, Check, Clock, Download, XCircle } from "lucide-react";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useOptimisticRemoveFile } from "../hooks/useOptimisticFiles";
 import { DeleteFileDialog } from "./DeleteFileDialog";
@@ -51,6 +51,13 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
           <div className="flex items-center gap-1 text-blue-500">
             <Upload className="w-3 h-3" />
             {uploadState.progress}%
+          </div>
+        );
+      case "errored":
+        return (
+          <div className="flex items-center gap-1 text-red-500">
+            <XCircle className="w-3 h-3" />
+            Error: {uploadState.message}
           </div>
         );
       case "uploaded":

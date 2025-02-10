@@ -1,12 +1,25 @@
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
+import { toast } from "sonner";
 
 export function useFileUploader() {
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const startUpload = useMutation(api.files.startUpload);
   const updateUploadProgress = useMutation(api.files.updateUploadProgress);
   const completeUpload = useMutation(api.files.completeUpload);
+  const setErrorState = useMutation(api.files.setErrorState);
+
+  const getErrorMessage = (xhr: XMLHttpRequest): string => {
+    try {
+      const response = JSON.parse(xhr.responseText);
+      if (response.message) return response.message;
+      if (response.error) return response.error;
+    } catch (e) {
+      // If we can't parse the response, fall back to status text
+    }
+    return xhr.statusText || `Upload failed with status ${xhr.status}`;
+  };
 
   const uploadFile = async (file: File, fileId: Id<"files">) => {
     try {
@@ -40,15 +53,24 @@ export function useFileUploader() {
             await completeUpload({ id: fileId, storageId });
             resolve(undefined);
           } else {
-            reject(new Error(`Upload failed with status ${xhr.status}`));
+            reject(new Error(getErrorMessage(xhr)));
           }
         };
 
-        xhr.onerror = () => reject(new Error("Upload failed"));
+        xhr.onerror = () => {
+          const message = getErrorMessage(xhr);
+          reject(new Error(message || "Network error during upload"));
+        };
         xhr.send(file);
       });
     } catch (error) {
       console.error("Upload failed:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      await setErrorState({ id: fileId, message: errorMessage });
+      toast.error(`Failed to upload ${file.name}`, {
+        description: errorMessage,
+      });
     }
   };
 
