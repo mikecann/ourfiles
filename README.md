@@ -46,4 +46,4 @@ then
 bun dev:self-host
 ```
 
-It should now be working for you :)
+It should now have opened a browser window for you to use.
