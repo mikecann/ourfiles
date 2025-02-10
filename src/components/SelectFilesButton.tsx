@@ -1,17 +1,24 @@
 import * as React from "react";
+import { Button } from "./ui/button";
+import { Plus, LayoutDashboard } from "lucide-react";
 
-type SelectFilesButtonProps = {
-  onClick: () => void;
+type ActionButtonsProps = {
+  onAddClick: () => void;
 };
 
-export const AddFiles: React.FC<SelectFilesButtonProps> = ({ onClick }) => {
+export const AddItemsButton: React.FC<ActionButtonsProps> = ({
+  onAddClick,
+}) => {
   return (
-    <button
-      onClick={onClick}
-      className="fixed top-4 right-4 px-4 py-2 bg-white hover:bg-gray-50 
-        border rounded-lg text-sm text-gray-600 transition-colors duration-200"
-    >
-      Add Files
-    </button>
+    <>
+      <Button
+        size="icon"
+        variant="outline"
+        onClick={onAddClick}
+        className="fixed bottom-8 right-8  rounded-full w-20 h-20 shadow-lg bg-white hover:bg-gray-50 border-gray-200 p-0 flex items-center justify-center"
+      >
+        <Plus className="w-10 h-10 text-gray-200" />
+      </Button>
+    </>
   );
 };

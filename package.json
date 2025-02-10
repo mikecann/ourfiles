@@ -8,7 +8,7 @@
     "dev:self-host": "npm-run-all --parallel dev:frontend dev:backend-self-host dev:ts",
     "dev:frontend": "vite --open",
     "dev:ts": "tsc -b -w --preserveWatchOutput",
-    "dev:backend": "convex dev",
+    "dev:backend": "convex dev --tail-logs",
     "dev:backend-self-host": "convex self-host dev",
     "predev": "convex dev --until-success && convex dashboard",
     "build": "tsc -b && vite build",

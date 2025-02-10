@@ -3,7 +3,7 @@ import { useCallback, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { SelectedItem } from "./SelectedItem";
 import { UnselectedItem } from "./UnselectedItem";
-import { AddFiles } from "./SelectFilesButton";
+import { AddItemsButton } from "./SelectFilesButton";
 import { DropZoneOverlay } from "./DropZoneOverlay";
 import { EmptyState } from "./EmptyState";
 import { SelectionBox } from "./SelectionBox";
@@ -19,6 +19,7 @@ import { api } from "../../convex/_generated/api";
 import { DeleteFileDialog } from "./DeleteFileDialog";
 import { Toaster } from "./ui/toast";
 import { useFileCreator } from "../hooks/useFileCreator";
+import { TopRightItems } from "./TopRightItems";
 
 export const FileUpload: React.FC = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<Set<Id<"files">>>(
@@ -156,6 +157,11 @@ export const FileUpload: React.FC = () => {
     setShowDeleteConfirm(false);
   };
 
+  const handleDashboardClick = () => {
+    // TODO: Implement dashboard functionality
+    console.log("Opening dashboard...");
+  };
+
   return (
     <>
       <div
@@ -171,12 +177,9 @@ export const FileUpload: React.FC = () => {
           transition-colors duration-200 ease-in-out
         `}
       >
-        <div className="fixed bottom-4 right-4 text-sm text-gray-400 select-none pointer-events-none flex items-center gap-2">
-          <HelpCircle className="w-4 h-4" />
-          Drag files in and out to upload and download
-        </div>
+        <AddItemsButton onAddClick={handleSelectFilesClick} />
 
-        <AddFiles onClick={handleSelectFilesClick} />
+        <TopRightItems onDashboardClick={handleDashboardClick} />
 
         <input
           ref={fileInputRef}
@@ -208,7 +211,14 @@ export const FileUpload: React.FC = () => {
           />
         ))}
 
-        {hasFiles ? null : <EmptyState />}
+        {hasFiles ? (
+          <div className="fixed bottom-4 left-4 text-sm text-gray-400 select-none pointer-events-none flex items-center gap-2">
+            <HelpCircle className="w-4 h-4" />
+            Drag files in and out to upload and download
+          </div>
+        ) : (
+          <EmptyState />
+        )}
 
         {isDragActive && <DropZoneOverlay />}
 
