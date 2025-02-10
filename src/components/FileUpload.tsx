@@ -152,6 +152,57 @@ export const FileUpload: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  React.useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragSelecting) return;
+
+      // Clamp coordinates to window boundaries
+      const x = Math.max(0, Math.min(e.pageX, window.innerWidth));
+      const y = Math.max(0, Math.min(e.pageY, window.innerHeight));
+
+      setSelectionCurrent({ x, y });
+
+      // Calculate selection box bounds
+      const left = Math.min(selectionStart.x, x);
+      const right = Math.max(selectionStart.x, x);
+      const top = Math.min(selectionStart.y, y);
+      const bottom = Math.max(selectionStart.y, y);
+
+      // Find files that intersect with the selection box
+      const selectedIds = new Set<Id<"files">>();
+      for (const file of files) {
+        const fileLeft = file.position.x - 20;
+        const fileRight = file.position.x + 20;
+        const fileTop = file.position.y - 20;
+        const fileBottom = file.position.y + 20;
+
+        if (
+          fileLeft < right &&
+          fileRight > left &&
+          fileTop < bottom &&
+          fileBottom > top
+        ) {
+          selectedIds.add(file._id);
+        }
+      }
+      setSelectedFileIds(selectedIds);
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragSelecting(false);
+    };
+
+    if (isDragSelecting) {
+      window.addEventListener("mousemove", handleGlobalMouseMove);
+      window.addEventListener("mouseup", handleGlobalMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleGlobalMouseMove);
+      window.removeEventListener("mouseup", handleGlobalMouseUp);
+    };
+  }, [isDragSelecting, selectionStart, files]);
+
   const handleConfirmDelete = () => {
     removeFile({ ids: Array.from(selectedFileIds) });
     setSelectedFileIds(new Set());
@@ -168,9 +219,6 @@ export const FileUpload: React.FC = () => {
         {...getRootProps()}
         ref={containerRef}
         onMouseDown={handleContainerMouseDown}
-        onMouseMove={handleContainerMouseMove}
-        onMouseUp={handleContainerMouseUp}
-        onMouseLeave={handleContainerMouseUp}
         className={`
           min-h-screen pt-20 flex items-center justify-center relative
           ${isDragActive ? "bg-blue-50" : "bg-gray-50"}
