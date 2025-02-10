@@ -3,8 +3,7 @@ import { v } from "convex/values";
 import { ConvexError } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
-
-const UPLOAD_TIMEOUT_MS = 10000;
+import { MAX_FILE_SIZE, UPLOAD_TIMEOUT_MS } from "./constants";
 
 export const list = query({
   args: {},
@@ -37,6 +36,11 @@ export const create = mutation({
   handler: async (ctx, { files }) => {
     const fileIds = [];
     for (const file of files) {
+      if (file.size > MAX_FILE_SIZE)
+        throw new ConvexError(
+          `File ${file.name} exceeds maximum size of ${MAX_FILE_SIZE / 1024 / 1024}MB`,
+        );
+
       const id = await ctx.db.insert("files", {
         ...file,
         uploadState: {
