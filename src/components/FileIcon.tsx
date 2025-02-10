@@ -28,6 +28,13 @@ export const FileIcon: React.FC<FileIconProps> = ({
   tooltip,
   draggable,
 }) => {
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (file.uploadState.kind === "uploaded") {
+      window.open(file.uploadState.url, "_blank");
+    }
+  };
+
   return (
     <div
       className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto"
@@ -55,6 +62,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
           `}
           onClick={onClick}
           onMouseDown={onMouseDown}
+          onDoubleClick={handleDoubleClick}
         >
           <FileTypeIcon
             type={file.type}
@@ -94,6 +102,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
         `}
         onClick={onClick}
         onMouseDown={onMouseDown}
+        onDoubleClick={handleDoubleClick}
       >
         {file.name}
       </span>
