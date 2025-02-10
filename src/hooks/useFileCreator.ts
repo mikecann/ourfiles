@@ -7,7 +7,7 @@ import { api } from "../../convex/_generated/api";
 export function useFileCreator() {
   const createFile = useOptimisticCreateFile();
   const { uploadFile } = useFileUploader();
-  const config = useQuery(api.config.getConfig);
+  const config = useQuery(api.constants.getConfig);
 
   const createAndUploadFiles = async (
     files: File[],

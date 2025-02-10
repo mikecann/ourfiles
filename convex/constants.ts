@@ -1,3 +1,5 @@
+import { query } from "./_generated/server";
+
 // Helper to safely get environment variables with proper typing
 const getEnvVar = <T>({
   name,
@@ -35,3 +37,12 @@ export const FILE_CLEAR_INTERVAL_MINS = getEnvVar({
   defaultValue: -1,
 });
 
+export const getConfig = query({
+  args: {},
+  handler: async () => {
+    return {
+      maxFileSize: MAX_FILE_SIZE,
+      uploadTimeoutMs: UPLOAD_TIMEOUT_MS,
+    };
+  },
+});
