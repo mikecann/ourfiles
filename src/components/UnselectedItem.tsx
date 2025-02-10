@@ -25,6 +25,7 @@ export const UnselectedItem: React.FC<UnselectedItemProps> = ({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       draggable={canDownload}
+      animate={true}
     />
   );
 };

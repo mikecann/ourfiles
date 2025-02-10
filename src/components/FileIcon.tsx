@@ -17,6 +17,7 @@ type FileIconProps = {
   onTouchEnd?: (e: React.TouchEvent) => void;
   tooltip?: React.ReactNode;
   draggable?: boolean;
+  animate?: boolean;
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
@@ -33,7 +34,37 @@ export const FileIcon: React.FC<FileIconProps> = ({
   onTouchEnd,
   tooltip,
   draggable,
+  animate = false,
 }) => {
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [isRemoteChange, setIsRemoteChange] = React.useState(false);
+  const lastPosition = React.useRef({ x: file.position.x, y: file.position.y });
+
+  React.useEffect(() => {
+    // If position changed and we're not dragging, it must be a remote change
+    if (
+      !isDragging &&
+      (lastPosition.current.x !== file.position.x ||
+        lastPosition.current.y !== file.position.y)
+    ) {
+      setIsRemoteChange(true);
+    } else {
+      setIsRemoteChange(false);
+    }
+    lastPosition.current = { x: file.position.x, y: file.position.y };
+  }, [file.position, isDragging]);
+
+  const handleDragStart = (e: React.DragEvent) => {
+    setIsDragging(true);
+    setIsRemoteChange(false);
+    onDragStart?.(e);
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    setIsDragging(false);
+    onDragEnd?.(e);
+  };
+
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (file.uploadState.kind === "uploaded") {
@@ -41,18 +72,25 @@ export const FileIcon: React.FC<FileIconProps> = ({
     }
   };
 
+  // Don't apply transitions if this is a ghost preview (has pointer-events: none)
+  const isGhostPreview = style?.pointerEvents === "none";
+
   return (
     <div
       className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto file-icon"
       style={{
         left: file.position.x - 20, // Center the icon on drop position
         top: file.position.y - 20,
+        transition:
+          !isGhostPreview && !isDragging && animate
+            ? "left 0.2s ease-out, top 0.2s ease-out"
+            : "none",
         ...style,
       }}
       draggable={draggable}
-      onDragStart={onDragStart}
+      onDragStart={handleDragStart}
       onDrag={onDrag}
-      onDragEnd={onDragEnd}
+      onDragEnd={handleDragEnd}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}

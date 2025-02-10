@@ -203,6 +203,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         draggable={true}
+        animate={false}
         tooltip={
           !disableTooltip && !isDragging && !isInternalDragging ? (
             <FileTooltip
@@ -226,6 +227,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
             }}
             isSelected={true}
             style={{ opacity: 0.5, pointerEvents: "none" }}
+            animate={false}
           />
           {relativePositions.map(({ id, offsetX, offsetY }) => {
             const relativeFile = allSelectedFiles.find((f) => f._id === id);
@@ -242,6 +244,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
                 }}
                 isSelected={true}
                 style={{ opacity: 0.5, pointerEvents: "none" }}
+                animate={true}
               />
             );
           })}
