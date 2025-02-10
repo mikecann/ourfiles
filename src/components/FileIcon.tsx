@@ -59,7 +59,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
 
   return (
     <div
-      className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto file-icon"
+      className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto file-icon z-10"
       style={{
         left: file.position.x - 20, // Center the icon on drop position
         top: file.position.y - 20,

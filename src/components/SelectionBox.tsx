@@ -16,7 +16,7 @@ export const SelectionBox: React.FC<SelectionBoxProps> = ({
 
   return (
     <div
-      className="absolute border border-blue-400 bg-blue-50 bg-opacity-20 pointer-events-none"
+      className="absolute border border-blue-400 bg-blue-50 bg-opacity-20 pointer-events-none z-0"
       style={{
         left,
         top,
