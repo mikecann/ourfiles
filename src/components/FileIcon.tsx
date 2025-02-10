@@ -18,6 +18,7 @@ type FileIconProps = {
   tooltip?: React.ReactNode;
   draggable?: boolean;
   animate?: boolean;
+  disableTooltip?: boolean;
 };
 
 export const FileIcon: React.FC<FileIconProps> = ({
@@ -35,6 +36,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
   tooltip,
   draggable,
   animate = false,
+  disableTooltip,
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
 
@@ -77,7 +79,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      {tooltip}
+      {!disableTooltip && tooltip}
       <div className="relative">
         <div
           className={`

@@ -114,6 +114,7 @@ export const FileUpload: React.FC = () => {
             key={file._id}
             file={file}
             onClick={(e) => handleFileClick(file._id, e)}
+            isDragSelecting={isDragSelecting}
           />
         ))}
 
@@ -125,7 +126,7 @@ export const FileUpload: React.FC = () => {
             onDragEnd={(updates) => updateFilePositions({ updates })}
             onDelete={() => setSelectedFileIds(new Set())}
             onClick={(e) => handleFileClick(file._id, e)}
-            disableTooltip={selectedFiles.length > 1}
+            disableTooltip={selectedFiles.length > 1 || isDragSelecting}
           />
         ))}
 

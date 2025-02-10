@@ -6,11 +6,13 @@ import { useFileDownloadDrag } from "../hooks/useFileDownloadDrag";
 type UnselectedItemProps = {
   file: Doc<"files">;
   onClick: (e: React.MouseEvent) => void;
+  isDragSelecting?: boolean;
 };
 
 export const UnselectedItem: React.FC<UnselectedItemProps> = ({
   file,
   onClick,
+  isDragSelecting,
 }) => {
   const { handleDragStart, handleDragEnd, canDownload } = useFileDownloadDrag({
     files: [file],
@@ -26,6 +28,7 @@ export const UnselectedItem: React.FC<UnselectedItemProps> = ({
       onDragEnd={handleDragEnd}
       draggable={canDownload}
       animate={true}
+      disableTooltip={isDragSelecting}
     />
   );
 };
