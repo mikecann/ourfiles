@@ -9,7 +9,7 @@
     "dev:frontend": "vite --open",
     "dev:ts": "tsc -b -w --preserveWatchOutput",
     "dev:backend": "convex dev --tail-logs",
-    "dev:backend-self-host": "convex self-host dev",
+    "dev:backend-self-host": "convex self-host dev --tail-logs",
     "predev": "convex dev --until-success && convex dashboard",
     "build": "tsc -b && vite build",
     "lint": "tsc && eslint .  --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
