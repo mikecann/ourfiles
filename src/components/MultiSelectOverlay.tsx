@@ -46,7 +46,7 @@ export const MultiSelectOverlay: React.FC<MultiSelectOverlayProps> = ({
     <>
       {/* Dotted selection box */}
       <div
-        className="absolute border-2 border-dashed border-blue-300 rounded-lg pointer-events-none select-none"
+        className="absolute border-2 border-dashed border-blue-300 rounded-lg pointer-events-none select-none z-10"
         style={{
           left: bounds.left,
           top: bounds.top,
@@ -56,7 +56,7 @@ export const MultiSelectOverlay: React.FC<MultiSelectOverlayProps> = ({
       />
       {/* Multi-select tooltip */}
       <div
-        className="absolute bg-white rounded-lg shadow-lg p-2 border text-sm pointer-events-none select-none"
+        className="absolute bg-white rounded-lg shadow-lg p-2 border text-sm pointer-events-none select-none z-10"
         style={{
           left: bounds.left + bounds.width / 2,
           top: bounds.top - 10,
