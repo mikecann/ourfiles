@@ -1,0 +1,1 @@
+This docker file is borrowed from the official Convex repo if you want an up to date version of this and more instructions see this file: https://github.com/get-convex/convex-backend/blob/main/self-hosted/docker/README.md
