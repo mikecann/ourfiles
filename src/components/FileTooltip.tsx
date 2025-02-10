@@ -121,21 +121,28 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
   return (
     <>
       <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-auto flex flex-col items-center animate-popIn">
-        <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[300px]">
+        <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[280px]">
           <div className="flex flex-col">
             {uploadState.kind === "uploaded" && (
               <FilePreview type={type} url={uploadState.url} />
             )}
-            <div className="text-xs font-medium text-gray-500 mb-1">
-              PROPERTIES
-            </div>
-            <div className="text-gray-600">
-              Size: {(size / 1024).toFixed(1)} KB
-            </div>
-            <div className="text-gray-600">Type: {type || "Unknown"}</div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <span>State:</span>
-              {getUploadStateDisplay()}
+            <div className="grid grid-cols-2 gap-4 relative">
+              <div>
+                <div className="text-xs font-medium text-gray-500 mb-1">
+                  PROPERTIES
+                </div>
+                <div className="text-gray-600">
+                  Size: {(size / 1024).toFixed(1)} KB
+                </div>
+                <div className="text-gray-600">Type: {type || "Unknown"}</div>
+              </div>
+              <div className="absolute top-0 bottom-0 left-1/2 border-l border-dotted border-gray-200" />
+              <div>
+                <div className="text-xs font-medium text-gray-500 mb-1">
+                  STATE
+                </div>
+                <div className="text-gray-600">{getUploadStateDisplay()}</div>
+              </div>
             </div>
             <div className="bg-gray-200 -mx-3 my-2" />
             <div className="-mx-3 -mb-3 p-2 bg-gray-50 rounded-b-lg flex gap-2">
