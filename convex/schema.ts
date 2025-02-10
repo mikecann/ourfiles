@@ -17,6 +17,8 @@ export default defineSchema({
       v.object({
         kind: v.literal("uploading"),
         progress: v.number(),
+        lastProgressAt: v.number(),
+        timeoutJobId: v.id("_scheduled_functions"),
       }),
       v.object({
         kind: v.literal("uploaded"),
