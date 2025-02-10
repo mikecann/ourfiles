@@ -20,6 +20,7 @@ import { DeleteFileDialog } from "./DeleteFileDialog";
 import { Toaster } from "./ui/toast";
 import { useFileCreator } from "../hooks/useFileCreator";
 import { TopRightItems } from "./TopRightItems";
+import { MultiSelectOverlay } from "./MultiSelectOverlay";
 
 export const FileUpload: React.FC = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<Set<Id<"files">>>(
@@ -210,6 +211,10 @@ export const FileUpload: React.FC = () => {
             disableTooltip={selectedFiles.length > 1}
           />
         ))}
+
+        {selectedFiles.length > 1 && (
+          <MultiSelectOverlay files={selectedFiles} />
+        )}
 
         {hasFiles ? (
           <div className="fixed bottom-4 left-4 text-sm text-gray-400 select-none pointer-events-none flex items-center gap-2">
