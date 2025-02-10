@@ -35,7 +35,7 @@ docker compose up
 then in another window get an admin key
 
 ```bash
-docker exec convex-local-backend ./generate_admin_key.sh
+docker exec dropvex-backend ./generate_admin_key.sh
 ```
 
 Take that key, should look something like: `convex-self-hosted|015735929b52dacf834f1cc04bcc014f8112271becec91b608fa5efa088dd07ef2d56532a452764d1ea58c4282d99ec975` and put it in `.env.local` in `CONVEX_SELF_HOST_ADMIN_KEY`
