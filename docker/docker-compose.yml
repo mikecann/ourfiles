@@ -1,6 +1,7 @@
 services:
   backend:
     image: ghcr.io/get-convex/self-hosted-backend:latest
+    restart: always
     ports:
       - "${PORT:-3210}:3210"
       - "${SITE_PROXY_PORT:-3211}:3211"
@@ -24,6 +25,7 @@ services:
 
   dashboard:
     image: ghcr.io/get-convex/self-hosted-dashboard:latest
+    restart: always
     ports:
       - "${DASHBOARD_PORT:-6791}:6791"
     environment:
