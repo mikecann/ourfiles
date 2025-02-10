@@ -99,7 +99,6 @@ export const FileUpload: React.FC = () => {
           transition-colors duration-200 ease-in-out
         `}
       >
-        <AddItemsButton onAddClick={handleSelectFilesClick} />
         <TopRightItems onDashboardClick={handleDashboardClick} />
 
         <input
@@ -133,8 +132,13 @@ export const FileUpload: React.FC = () => {
         {selectedFiles.length > 1 && (
           <MultiSelectOverlay files={selectedFiles} />
         )}
+
+        <AddItemsButton onAddClick={handleSelectFilesClick} />
+
         {!hasFiles && <EmptyState />}
+
         {isDragActive && <DropZoneOverlay />}
+
         {isDragSelecting && (
           <SelectionBox start={selectionStart} current={selectionCurrent} />
         )}
