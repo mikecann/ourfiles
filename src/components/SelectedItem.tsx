@@ -28,6 +28,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
   const [dragPosition, setDragPosition] = React.useState({ x: 0, y: 0 });
   const [mouseOffset, setMouseOffset] = React.useState({ x: 0, y: 0 });
   const [isInternalDragging, setIsInternalDragging] = React.useState(false);
+  const [isTouchDragging, setIsTouchDragging] = React.useState(false);
   const {
     isDragging,
     handleDragStart: handleExternalDragStart,
@@ -130,6 +131,65 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    setIsTouchDragging(true);
+    const touch = e.touches[0];
+    const rect = (e.target as HTMLElement).getBoundingClientRect();
+    const offsetX = touch.clientX - rect.left;
+    const offsetY = touch.clientY - rect.top;
+    setMouseOffset({ x: offsetX, y: offsetY });
+
+    const newPosition = {
+      x: touch.clientX - offsetX + 20,
+      y: touch.clientY - offsetY + 20,
+    };
+    setDragPosition(newPosition);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isTouchDragging) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+
+    const newPosition = {
+      x: touch.clientX - mouseOffset.x + 20,
+      y: touch.clientY - mouseOffset.y + 20,
+    };
+    setDragPosition(newPosition);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    setIsTouchDragging(false);
+
+    const touch = e.changedTouches[0];
+    if (
+      touch.clientX > 0 &&
+      touch.clientY > 0 &&
+      touch.clientX < window.innerWidth &&
+      touch.clientY < window.innerHeight
+    ) {
+      const newPosition = {
+        x: touch.clientX - mouseOffset.x + 20,
+        y: touch.clientY - mouseOffset.y + 20,
+      };
+
+      const updates: { id: Id<"files">; position: { x: number; y: number } }[] =
+        [
+          { id: file._id, position: newPosition },
+          ...relativePositions.map(({ id, offsetX, offsetY }) => ({
+            id,
+            position: {
+              x: newPosition.x + offsetX,
+              y: newPosition.y + offsetY,
+            },
+          })),
+        ];
+      onDragEnd(updates);
+    }
+  };
+
   return (
     <>
       <FileIcon
@@ -139,6 +199,9 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         draggable={true}
         tooltip={
           !disableTooltip && !isDragging && !isInternalDragging ? (
@@ -154,7 +217,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
           ) : undefined
         }
       />
-      {isInternalDragging && (
+      {(isInternalDragging || isTouchDragging) && (
         <>
           <FileIcon
             file={{

@@ -12,6 +12,9 @@ type FileIconProps = {
   onDragStart?: (e: React.DragEvent) => void;
   onDrag?: (e: React.DragEvent) => void;
   onDragEnd?: (e: React.DragEvent) => void;
+  onTouchStart?: (e: React.TouchEvent) => void;
+  onTouchMove?: (e: React.TouchEvent) => void;
+  onTouchEnd?: (e: React.TouchEvent) => void;
   tooltip?: React.ReactNode;
   draggable?: boolean;
 };
@@ -25,6 +28,9 @@ export const FileIcon: React.FC<FileIconProps> = ({
   onDragStart,
   onDrag,
   onDragEnd,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
   tooltip,
   draggable,
 }) => {
@@ -37,7 +43,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
 
   return (
     <div
-      className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto"
+      className="absolute flex flex-col items-center gap-1 cursor-pointer select-none pointer-events-auto file-icon"
       style={{
         left: file.position.x - 20, // Center the icon on drop position
         top: file.position.y - 20,
@@ -47,6 +53,9 @@ export const FileIcon: React.FC<FileIconProps> = ({
       onDragStart={onDragStart}
       onDrag={onDrag}
       onDragEnd={onDragEnd}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       {tooltip}
       <div className="relative">

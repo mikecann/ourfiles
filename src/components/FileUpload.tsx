@@ -213,6 +213,17 @@ export const FileUpload: React.FC = () => {
     window.open(import.meta.env.VITE_CONVEX_DASHBOARD_URL, "_blank");
   };
 
+  React.useEffect(() => {
+    // Prevent page scrolling when dragging files
+    const preventScroll = (e: TouchEvent) => {
+      if (e.target instanceof Element && e.target.closest(".file-icon"))
+        e.preventDefault();
+    };
+
+    document.addEventListener("touchmove", preventScroll, { passive: false });
+    return () => document.removeEventListener("touchmove", preventScroll);
+  }, []);
+
   return (
     <>
       <div
