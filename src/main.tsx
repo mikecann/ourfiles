@@ -4,10 +4,15 @@ import { ThemeProvider } from "next-themes";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import App from "./App.tsx";
 import "./index.css";
+import { SettingsProvider, useSettings } from "./contexts/SettingsContext";
 
-const convexUrl =
-  localStorage.getItem("convexUrl") ?? import.meta.env.VITE_CONVEX_URL;
-const convex = new ConvexReactClient(convexUrl);
+const ConvexProviderWrapper: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { settings } = useSettings();
+  const convex = new ConvexReactClient(settings.convexUrl);
+  return <ConvexProvider client={convex}>{children}</ConvexProvider>;
+};
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -17,9 +22,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       enableSystem={false}
       forcedTheme="light"
     >
-      <ConvexProvider client={convex}>
-        <App />
-      </ConvexProvider>
+      <SettingsProvider>
+        <ConvexProviderWrapper>
+          <App />
+        </ConvexProviderWrapper>
+      </SettingsProvider>
     </ThemeProvider>
   </React.StrictMode>,
 );

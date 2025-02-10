@@ -2,6 +2,7 @@ import * as React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useSettings } from "../contexts/SettingsContext";
 
 const defaultConvexUrl = import.meta.env.VITE_CONVEX_URL;
 const defaultDashboardUrl = import.meta.env.VITE_CONVEX_DASHBOARD_URL;
@@ -15,28 +16,19 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
   open,
   onOpenChange,
 }) => {
-  const [convexUrl, setConvexUrl] = React.useState(
-    () => localStorage.getItem("convexUrl") ?? defaultConvexUrl,
-  );
-
-  const [dashboardUrl, setDashboardUrl] = React.useState(
-    () => localStorage.getItem("convexDashboardUrl") ?? defaultDashboardUrl,
-  );
+  const { settings, setSettings, resetSettings } = useSettings();
+  const [convexUrl, setConvexUrl] = React.useState(settings.convexUrl);
+  const [dashboardUrl, setDashboardUrl] = React.useState(settings.dashboardUrl);
 
   const handleSave = () => {
-    localStorage.setItem("convexUrl", convexUrl);
-    localStorage.setItem("convexDashboardUrl", dashboardUrl);
+    setSettings({ convexUrl, dashboardUrl });
     onOpenChange(false);
-    window.location.reload();
   };
 
   const handleReset = () => {
     if (!confirm("Are you sure you want to reset to default settings?")) return;
-
-    localStorage.removeItem("convexUrl");
-    localStorage.removeItem("convexDashboardUrl");
-    setConvexUrl(defaultConvexUrl);
-    setDashboardUrl(defaultDashboardUrl);
+    resetSettings();
+    onOpenChange(false);
   };
 
   return (

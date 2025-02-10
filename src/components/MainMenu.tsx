@@ -8,8 +8,7 @@ import {
 import { Button } from "./ui/button";
 import { Menu, ExternalLink, Settings } from "lucide-react";
 import SettingsDialog from "./SettingsDialog";
-
-const defaultDashboardUrl = import.meta.env.VITE_CONVEX_DASHBOARD_URL;
+import { useSettings } from "../contexts/SettingsContext";
 
 type MainMenuProps = {
   onDashboardClick: () => void;
@@ -17,11 +16,10 @@ type MainMenuProps = {
 
 export const MainMenu: React.FC<MainMenuProps> = ({ onDashboardClick }) => {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const { settings } = useSettings();
 
   const handleDashboardClick = () => {
-    const dashboardUrl =
-      localStorage.getItem("convexDashboardUrl") ?? defaultDashboardUrl;
-    window.open(dashboardUrl, "_blank");
+    window.open(settings.dashboardUrl, "_blank");
   };
 
   return (
