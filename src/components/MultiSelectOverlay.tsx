@@ -22,11 +22,12 @@ export const MultiSelectOverlay: React.FC<MultiSelectOverlayProps> = ({
     const NAME_WIDTH = 50; // Half of max filename width (100px)
     const NAME_HEIGHT = 20; // Height of the filename text
     const PADDING = 10; // Padding around the selection
+    const EXTRA_RIGHT_PADDING = 5; // Extra padding for the right side
 
     files.forEach((file) => {
-      minX = Math.min(minX, file.position.x - NAME_WIDTH);
+      minX = Math.min(minX, file.position.x - ICON_SIZE);
       minY = Math.min(minY, file.position.y - ICON_SIZE);
-      maxX = Math.max(maxX, file.position.x + NAME_WIDTH);
+      maxX = Math.max(maxX, file.position.x + NAME_WIDTH + EXTRA_RIGHT_PADDING);
       maxY = Math.max(maxY, file.position.y + ICON_SIZE + NAME_HEIGHT);
     });
 
