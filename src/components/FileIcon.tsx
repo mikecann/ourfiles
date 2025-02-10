@@ -37,26 +37,9 @@ export const FileIcon: React.FC<FileIconProps> = ({
   animate = false,
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
-  const [isRemoteChange, setIsRemoteChange] = React.useState(false);
-  const lastPosition = React.useRef({ x: file.position.x, y: file.position.y });
-
-  React.useEffect(() => {
-    // If position changed and we're not dragging, it must be a remote change
-    if (
-      !isDragging &&
-      (lastPosition.current.x !== file.position.x ||
-        lastPosition.current.y !== file.position.y)
-    ) {
-      setIsRemoteChange(true);
-    } else {
-      setIsRemoteChange(false);
-    }
-    lastPosition.current = { x: file.position.x, y: file.position.y };
-  }, [file.position, isDragging]);
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
-    setIsRemoteChange(false);
     onDragStart?.(e);
   };
 
@@ -67,9 +50,8 @@ export const FileIcon: React.FC<FileIconProps> = ({
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (file.uploadState.kind === "uploaded") {
+    if (file.uploadState.kind === "uploaded")
       window.open(file.uploadState.url, "_blank");
-    }
   };
 
   // Don't apply transitions if this is a ghost preview (has pointer-events: none)
@@ -101,11 +83,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
           className={`
             w-10 h-10 rounded-lg shadow-sm border flex items-center justify-center relative overflow-hidden
             transition-all duration-200
-            ${
-              isSelected
-                ? "bg-blue-50 border-blue-400 ring-2 ring-blue-400 ring-opacity-50"
-                : "bg-white hover:bg-gray-50"
-            }
+            ${isSelected ? "bg-blue-50 border-blue-400 ring-2 ring-blue-400 ring-opacity-50" : "bg-white hover:bg-gray-50"}
           `}
           onClick={onClick}
           onMouseDown={onMouseDown}
@@ -118,18 +96,10 @@ export const FileIcon: React.FC<FileIconProps> = ({
           {(file.uploadState.kind === "uploading" ||
             file.uploadState.kind === "errored") && (
             <div
-              className={`absolute bottom-0 left-0 right-0 h-1 ${
-                file.uploadState.kind === "errored"
-                  ? "bg-red-100"
-                  : "bg-blue-100"
-              }`}
+              className={`absolute bottom-0 left-0 right-0 h-1 ${file.uploadState.kind === "errored" ? "bg-red-100" : "bg-blue-100"}`}
             >
               <div
-                className={`h-full transition-all duration-200 ${
-                  file.uploadState.kind === "errored"
-                    ? "bg-red-500"
-                    : "bg-blue-500"
-                }`}
+                className={`h-full transition-all duration-200 ${file.uploadState.kind === "errored" ? "bg-red-500" : "bg-blue-500"}`}
                 style={{
                   width:
                     file.uploadState.kind === "uploading"
@@ -143,10 +113,7 @@ export const FileIcon: React.FC<FileIconProps> = ({
         <UploadStatusIndicator file={file} />
       </div>
       <span
-        className={`
-          text-xs max-w-[100px] truncate
-          ${isSelected ? "text-blue-500" : "text-gray-600"}
-        `}
+        className={`text-xs max-w-[100px] truncate ${isSelected ? "text-blue-500" : "text-gray-600"}`}
         onClick={onClick}
         onMouseDown={onMouseDown}
         onDoubleClick={handleDoubleClick}
