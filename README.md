@@ -1,7 +1,7 @@
 # Dropvex
 
-A modern file storage system powered by Convex.
+A simple private file storage system powered by Convex.
 
-Simply drag and drop files onto the inteface to add files, then download them on another device.
+Simply drag and drop files onto the inteface to add files, then drag them out to download them.
 
 The project is built using React, Vite, Typescript, Convex, Tailwind
