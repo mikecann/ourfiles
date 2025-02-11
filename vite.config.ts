@@ -10,9 +10,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // This is important for serving it on the local network
   server: {
-    host: true,
-    allowedHosts: [],
+    allowedHosts: true, // This is important for serving it on my own network and I cant get the env var to work: https://github.com/vitejs/vite/pull/19325/files
   },
 });
