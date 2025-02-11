@@ -36,13 +36,15 @@ docker compose exec ourfiles-backend ./generate_admin_key.sh
 
 Running this remotely is possible but isnt currently the simplest thing to do. 
 
-Say you want to run this on your internal sever. You can simply `docker compose up` then access it from other machines on your lan (say `http://192.168.1.150:5173`). 
+Say you want to run this on a server on your internal network. You can simply `docker compose up` on that machine then access it from other machines on your LAN. Lets say your server's IP address is `192.168.1.150` then you can access the app at `http://192.168.1.150:5173`. 
 
-This will open the "frontend" however it wont be able to talk to the backend. You will need to edit `docker-compose.yml` and change all the `http://127.0.0.1` IP addresses to to `http://192.168.1.150`.
+This will open the "frontend" web app however it wont be able to talk to the backend, if you open the console you will see a number of errors. To fix this you need to edit `docker-compose.yml` and change all the `http://127.0.0.1` IP addresses to your servers IP, so `http://192.168.1.150`.
 
 You then start `docker compose up` once again and everything should connect.
 
-Most of the features should now work, except the ones that involve the [FileSystemAPI](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API) however. That API requires a "secure" context to work, so that means the entire app needs to be run over "https" instead of "http". This means you need to access it from `https://192.168.1.150:5173` not `http://` AND the backend needs to be running securely so that its websocket is `wss` not just `ws`
+Most of the features should now work. 
+
+There is one exception however, the multi-file drag out uses the [FileSystemAPI](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API). This API requires a "secure" context to work, so that means the entire app needs to be run over "https" instead of "http". This means you need to access it from `https://192.168.1.150:5173` not `http://` AND the backend needs to be running securely so that its websocket is `wss` not just `ws`
 
 I currently dont know what the best way of doing this is. Some have suggested using [tailscale serve](https://tailscale.com/kb/1242/tailscale-serve) others have suggested caddy or traefik to do this. Im not certain. If you have a way to solve this in a clean way I am very open to suggestions.
 
