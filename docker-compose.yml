@@ -1,12 +1,25 @@
 services:
+  # frontend:
+  #   build: .
+  #   ports:
+  #     - "5173:5173"
+  #   volumes:
+  #     - .:/convex
+  #     - /convex/node_modules
+  #   environment:
+  #     - VITE_CONVEX_URL=http://127.0.0.1:${PORT:-3210}
   backend:
-    image: ghcr.io/get-convex/self-hosted-backend:latest
+    build:
+      context: .
+      dockerfile: ./self-hosted/Dockerfile
     restart: always
     ports:
       - "${PORT:-3210}:3210"
       - "${SITE_PROXY_PORT:-3211}:3211"
     volumes:
       - data:/convex/data
+      - ./convex:/convex/convex
+
     environment:
       - INSTANCE_NAME=${INSTANCE_NAME:-}
       - INSTANCE_SECRET=${INSTANCE_SECRET:-}

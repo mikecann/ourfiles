@@ -1,7 +1,7 @@
 ![ss1](media/ss1.png)
 ![ss2](media/ss2.png)
 
-# Dropvex
+# Our Files
 
 A simple private file storage system powered by Convex.
 
@@ -11,39 +11,34 @@ The project is built using React, Vite, Typescript, Convex, Tailwind
 
 # Installation
 
-This project is designed to work with [Convex self-hosted](https://github.com/get-convex/convex-backend/blob/main/self-hosted/README.md). 
+This project is designed to work with [Convex self-hosted](https://github.com/get-convex/convex-backend/blob/main/self-hosted/README.md).
 
-First install dependencies
-
-```bash
-bun install
+```sh
+bun i
 ```
 
-then setup the env
+## Running the frontend & backend together
 
-```bash
-cp .env.local.example .env.local
+```sh
+bun dev
 ```
 
-then startup the backend
+## Self-hosted Docker Instructions
 
-```bash
-cd docker
+To run just the frontend, you can run `bun run dev:frontend`.
+
+You can run the backend and dashboard with the following command:
+
+```sh
 docker compose up
 ```
 
-then in another window get an admin key
+## To use the Convex Dashboard
+
+Visit `http://localhost:6791`
+
+To generate an admin key, run the following command:
 
 ```bash
-docker exec dropvex-backend ./generate_admin_key.sh
+docker compose exec backend ./generate_admin_key.sh
 ```
-
-Take that key, should look something like: `convex-self-hosted|015735929b52dacf834f1cc04bcc014f8112271becec91b608fa5efa088dd07ef2d56532a452764d1ea58c4282d99ec975` and put it in `.env.local` in `CONVEX_SELF_HOST_ADMIN_KEY`
-
-then
-
-```base
-bun dev:self-host
-```
-
-It should now have opened a browser window for you to use.
