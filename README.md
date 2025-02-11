@@ -1,7 +1,8 @@
 ![ss1](media/ss1.png)
 ![ss2](media/ss2.png)
+![ss3](media/ss3.png)
 
-# Our Files
+# OurFiles
 
 A simple private file storage system powered by Convex.
 

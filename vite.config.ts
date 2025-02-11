@@ -11,12 +11,6 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,
-    hmr: {
-      host: "0.0.0.0",
-    },
-  },
-  preview: {
-    host: "0.0.0.0",
+    allowedHosts: true, // This is important for serving it on my own network and I cant get the env var to work: https://github.com/vitejs/vite/pull/19325/files
   },
 });
