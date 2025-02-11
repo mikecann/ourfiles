@@ -1,14 +1,12 @@
 services:
-  frontend:
+  ourfiles-frontend:
     build: .
     restart: always
     ports:
       - "5173:80"
-    volumes:
-      - ./dist:/usr/share/nginx/html
     environment:
       - VITE_CONVEX_URL=http://127.0.0.1:${PORT:-3210}
-  backend:
+  ourfiles-backend:
     build:
       context: .
       dockerfile: ./self-hosted/Dockerfile
@@ -35,7 +33,7 @@ services:
       interval: 5s
       start_period: 5s
 
-  dashboard:
+  ourfiles-dashboard:
     image: ghcr.io/get-convex/self-hosted-dashboard:latest
     restart: always
     ports:
@@ -43,7 +41,7 @@ services:
     environment:
       - NEXT_PUBLIC_DEPLOYMENT_URL=http://127.0.0.1:${PORT:-3210}
     depends_on:
-      backend:
+      ourfiles-backend:
         condition: service_healthy
 
 volumes:
