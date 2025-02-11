@@ -1,17 +1,22 @@
-FROM node:20-alpine
+FROM node:18-alpine AS builder
 
-# Install npm dependencies
-# RUN npm install -g bun
+WORKDIR /app
 
-COPY package.json bun.lock ./
+COPY package.json ./
+# Self-update npm
 RUN npm install
 
 RUN npx update-browserslist-db@latest
 
 # Copy application files
 COPY . .
+RUN npm run build
+
+FROM nginx:stable-alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Expose necessary ports
-EXPOSE 5173
+EXPOSE 80
 
-CMD ["npx", "vite", "--host", "0.0.0.0"]
+CMD ["nginx", "-g", "daemon off;"]
