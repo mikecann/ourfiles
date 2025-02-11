@@ -9,7 +9,7 @@ RUN bun install
 COPY self-hosted/run.sh .
 COPY convex convex
 
-ENTRYPOINT ["./run.sh"]
+ENTRYPOINT ["/bin/bash", "./run.sh"]
 
 VOLUME /convex/data
 VOLUME /convex/convex
