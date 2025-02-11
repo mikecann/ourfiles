@@ -10,13 +10,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    host: true,
-    hmr: {
-      host: "0.0.0.0",
-    },
-  },
-  preview: {
-    host: "0.0.0.0",
-  },
 });
