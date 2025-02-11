@@ -24,7 +24,7 @@ docker compose up
 
 Then open your browser to: http://localhost:5173/
 
-### Convex Dashboard
+## Convex Dashboard
 
 Visit `http://localhost:6791`
 
