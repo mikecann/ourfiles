@@ -10,41 +10,32 @@ Simply drag and drop files onto the inteface to add files, then drag them out to
 
 The project is built using React, Vite, Typescript, Convex, Tailwind
 
-# Installation
+# Running
 
 This project is designed to work with [Convex self-hosted](https://github.com/get-convex/convex-backend/blob/main/self-hosted/README.md).
 
-First install dependencies
+The simplest way to get everything running together is:
 
-```bash
+```sh
 bun install
-```
-
-then setup the env
-
-```bash
-cp .env.local.example .env.local
-```
-
-then startup the backend
-
-```bash
-cd docker
+bun run build
 docker compose up
 ```
 
-then in another window get an admin key
+Then open your browser to: http://localhost:5173/
+
+## Convex Dashboard
+
+Visit `http://localhost:6791`
+
+To generate an admin key, run the following command:
 
 ```bash
-docker exec ourfiles-backend ./generate_admin_key.sh
+docker compose exec backend ./generate_admin_key.sh
 ```
 
-Take that key, should look something like: `convex-self-hosted|015735929b52dacf834f1cc04bcc014f8112271becec91b608fa5efa088dd07ef2d56532a452764d1ea58c4282d99ec975` and put it in `.env.local` in `CONVEX_SELF_HOST_ADMIN_KEY`
+# Development
 
-then
+You can develop this like any other convex project, just run `bun dev` and go through the convex setup proceedures, this will then target convex cloud.
 
-```base
-bun dev:self-host
-```
-
-It should now have opened a browser window for you to use.
+If you want to target localhost via self-hosting then checkout the convex docs for help on that: https://docs.convex.dev/self-hosting

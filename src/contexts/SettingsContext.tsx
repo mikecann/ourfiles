@@ -6,7 +6,7 @@ const storageKeys = {
 } as const;
 
 const envDefaults = {
-  CONVEX_URL: import.meta.env.VITE_CONVEX_URL,
+  CONVEX_URL: import.meta.env.VITE_CONVEX_URL ?? "http://127.0.0.1:3210",
   DASHBOARD_URL: import.meta.env.VITE_CONVEX_DASHBOARD_URL,
 } as const;
 
