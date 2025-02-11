@@ -10,7 +10,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // This is important for serving it on the local network
   server: {
-    allowedHosts: true,
+    host: true,
+    allowedHosts: [],
   },
 });
