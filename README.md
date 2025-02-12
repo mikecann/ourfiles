@@ -32,17 +32,17 @@ You will need an admin key, run the following command to generate one:
 docker compose exec ourfiles-backend ./generate_admin_key.sh
 ```
 
-# Running remotely
+## Access from other devices on the LAN
 
-Running this remotely is possible but isnt currently the simplest thing to do. 
+If you want to access the app from your devices you will need to set the "HOST_IP" environment variable before running docker compose. For example:
 
-Say you want to run this on a server on your internal network. You can simply `docker compose up` on that machine then access it from other machines on your LAN. Lets say your server's IP address is `192.168.1.150` then you can access the app at `http://192.168.1.150:5173`. 
+```sh
+bunx cross-env HOST_IP=192.168.1.165 docker compose up
+```
 
-This will open the "frontend" web app however it wont be able to talk to the backend, if you open the console you will see a number of errors. To fix this you need to edit `docker-compose.yml` and change all the `http://127.0.0.1` IP addresses to your servers IP, so `http://192.168.1.150`.
+Where 192.168.1.165 is the LAN IP address for your machine. You should then be able to open http://192.168.1.165:5173 on another device on your LAN. Note: if you are on Windows you may need to allow access to port 5173 in your windows firewall.
 
-You then start `docker compose up` once again and everything should connect.
-
-Most of the features should now work. 
+Most of the features should now work.
 
 There is one exception however, the multi-file drag out uses the [FileSystemAPI](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API). This API requires a "secure" context to work, so that means the entire app needs to be run over "https" instead of "http". This means you need to access it from `https://192.168.1.150:5173` not `http://` AND the backend needs to be running securely so that its websocket is `wss` not just `ws`
 
