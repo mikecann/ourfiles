@@ -1,4 +1,4 @@
-FROM ghcr.io/get-convex/self-hosted-backend:latest
+FROM ghcr.io/get-convex/convex-backend:latest
 
 WORKDIR /convex
 
