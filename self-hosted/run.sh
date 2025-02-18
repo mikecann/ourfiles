@@ -23,5 +23,5 @@ npx convex self-host dev --until-success
 # shellcheck disable=SC2064
 trap "kill $BACKEND_PID" SIGTERM
 
-# Run the backend, handling SIGTERM..
+# Run the backend, handling SIGTERM.
 wait $BACKEND_PID

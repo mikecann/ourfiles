@@ -1,16 +1,20 @@
-FROM node:18-alpine AS builder
+FROM oven/bun:1 as builder
 
 WORKDIR /app
 
-COPY package.json ./
-# Self-update npm
-RUN npm install
+ARG VITE_CONVEX_URL
+ARG VITE_CONVEX_DASHBOARD_URL
+ENV VITE_CONVEX_URL=$VITE_CONVEX_URL
+ENV VITE_CONVEX_DASHBOARD_URL=$VITE_CONVEX_DASHBOARD_URL
 
-RUN npx update-browserslist-db@latest
+COPY package.json ./
+# Install dependencies
+RUN bun install
+RUN bunx update-browserslist-db@latest
 
 # Copy application files
 COPY . .
-RUN npm run build
+RUN bun run build
 
 FROM nginx:stable-alpine
 
