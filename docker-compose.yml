@@ -40,7 +40,7 @@ services:
       start_period: 5s
 
   ourfiles-dashboard:
-    image: ghcr.io/get-convex/self-hosted-dashboard:latest
+    image: ghcr.io/get-convex/convex-dashboard:latest
     restart: always
     ports:
       - "${DASHBOARD_PORT:-6791}:6791"
