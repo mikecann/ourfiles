@@ -39,7 +39,7 @@ services:
       interval: 5s
       start_period: 5s
 
-  dashboard:
+  ourfiles-dashboard:
     image: ghcr.io/get-convex/convex-dashboard:latest
     restart: always
     ports:
