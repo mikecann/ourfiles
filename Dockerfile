@@ -7,10 +7,10 @@ ARG VITE_CONVEX_DASHBOARD_URL
 ENV VITE_CONVEX_URL=$VITE_CONVEX_URL
 ENV VITE_CONVEX_DASHBOARD_URL=$VITE_CONVEX_DASHBOARD_URL
 
-COPY package.json ./
+COPY package.json bun.lock ./
+
 # Install dependencies
 RUN bun install
-RUN bunx update-browserslist-db@latest
 
 # Copy application files
 COPY . .
