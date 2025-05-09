@@ -5,6 +5,7 @@ import { Doc, Id } from "../../convex/_generated/dataModel";
 import { useOptimisticRemoveFile } from "../hooks/useOptimisticFiles";
 import { DeleteFileDialog } from "./DeleteFileDialog";
 import { formatFileSize } from "../utils/formatters";
+import useIsMobile from "../hooks/useIsMobile";
 
 type FilePreviewProps = {
   type: string;
@@ -73,6 +74,7 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
 }) => {
   const removeFile = useOptimisticRemoveFile();
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const isMobile = useIsMobile();
 
   const handleDelete = () => {
     void removeFile({ ids: [fileId] });
@@ -121,8 +123,15 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
 
   return (
     <>
-      <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-auto flex flex-col items-center animate-popIn">
-        <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[280px]">
+      {/* Mobile overlay to intercept pointer events */}
+      {isMobile && (
+        <div
+          className="fixed inset-0 z-[9998] bg-transparent pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        />
+      )}
+      <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-auto flex flex-col items-center animate-popIn z-[9999]">
+        <div className="bg-green-500 rounded-lg shadow-lg p-3 border text-sm w-[280px]">
           <div className="flex flex-col">
             {uploadState.kind === "uploaded" && (
               <FilePreview type={type} url={uploadState.url} />
@@ -180,7 +189,6 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
           }}
         />
       </div>
-
       <DeleteFileDialog
         fileCount={1}
         open={showDeleteDialog}
