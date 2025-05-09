@@ -7,6 +7,7 @@ import { MultiFileDownloadDialog } from "./MultiFileDownloadDialog";
 import { toast } from "sonner";
 import { useDragPosition } from "../hooks/useDragPosition";
 import { FileGhostPreview } from "./FileGhostPreview";
+import useIsMobile from "@/hooks/useIsMobile";
 
 type SelectedItemProps = {
   file: Doc<"files">;
@@ -79,22 +80,27 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     }
   };
 
+  const isMobile = useIsMobile();
+  const isTooltipOpen =
+    !disableTooltip && !isExternalDragging && !isInternalDragging;
+  const isDragDisabled = isMobile && !isTooltipOpen;
+
   return (
     <>
       <FileIcon
         file={file}
         isSelected={true}
         onClick={onClick}
-        onDragStart={handleDragStartWrapper}
-        onDrag={handleDrag}
-        onDragEnd={handleDragEndWrapper}
-        onTouchStart={handleDragStart}
-        onTouchMove={handleDrag}
-        onTouchEnd={handleDragEnd}
+        onDragStart={isDragDisabled ? undefined : handleDragStartWrapper}
+        onDrag={isDragDisabled ? undefined : handleDrag}
+        onDragEnd={isDragDisabled ? undefined : handleDragEndWrapper}
+        onTouchStart={isDragDisabled ? undefined : handleDragStart}
+        onTouchMove={isDragDisabled ? undefined : handleDrag}
+        onTouchEnd={isDragDisabled ? undefined : handleDragEnd}
         draggable={true}
         animate={false}
         tooltip={
-          !disableTooltip && !isExternalDragging && !isInternalDragging ? (
+          isTooltipOpen ? (
             <FileTooltip
               key={file._id}
               fileId={file._id}
