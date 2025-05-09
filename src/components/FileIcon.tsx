@@ -40,16 +40,6 @@ export const FileIcon: React.FC<FileIconProps> = ({
 }) => {
   const [isDragging, setIsDragging] = React.useState(false);
 
-  const handleDragStart = (e: React.DragEvent) => {
-    setIsDragging(true);
-    onDragStart?.(e);
-  };
-
-  const handleDragEnd = (e: React.DragEvent) => {
-    setIsDragging(false);
-    onDragEnd?.(e);
-  };
-
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (file.uploadState.kind === "uploaded")
@@ -72,9 +62,23 @@ export const FileIcon: React.FC<FileIconProps> = ({
         ...style,
       }}
       draggable={draggable}
-      onDragStart={handleDragStart}
+      onDragStart={
+        onDragStart
+          ? (e: React.DragEvent) => {
+              setIsDragging(true);
+              onDragStart?.(e);
+            }
+          : undefined
+      }
       onDrag={onDrag}
-      onDragEnd={handleDragEnd}
+      onDragEnd={
+        onDragEnd
+          ? (e: React.DragEvent) => {
+              setIsDragging(false);
+              onDragEnd?.(e);
+            }
+          : undefined
+      }
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
