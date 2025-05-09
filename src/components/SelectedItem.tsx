@@ -19,6 +19,17 @@ type SelectedItemProps = {
   disableTooltip?: boolean;
 };
 
+// Helper to detect mobile devices
+function isMobileDevice() {
+  if (typeof window === "undefined") return false;
+  return (
+    /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent,
+    ) ||
+    (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+  );
+}
+
 export const SelectedItem: React.FC<SelectedItemProps> = ({
   file,
   allSelectedFiles,
@@ -58,6 +69,8 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
     onDragEnd,
   });
 
+  const [tooltipOpen, setTooltipOpen] = React.useState(false);
+
   const handleDragStartWrapper = (e: React.DragEvent) => {
     handleDragStart(e);
     if (canDownload) handleExternalDragStart(e);
@@ -93,6 +106,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
         onTouchEnd={handleDragEnd}
         draggable={true}
         animate={false}
+        disableDrag={isMobileDevice() && tooltipOpen}
         tooltip={
           !disableTooltip && !isExternalDragging && !isInternalDragging ? (
             <FileTooltip
@@ -103,6 +117,7 @@ export const SelectedItem: React.FC<SelectedItemProps> = ({
               type={file.type}
               onDelete={onDelete}
               uploadState={file.uploadState}
+              setTooltipOpen={setTooltipOpen}
             />
           ) : undefined
         }

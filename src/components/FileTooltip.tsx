@@ -61,6 +61,7 @@ type FileTooltipProps = {
   type: string;
   onDelete?: () => void;
   uploadState: Doc<"files">["uploadState"];
+  setTooltipOpen?: (open: boolean) => void;
 };
 
 export const FileTooltip: React.FC<FileTooltipProps> = ({
@@ -70,6 +71,7 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
   type,
   onDelete,
   uploadState,
+  setTooltipOpen,
 }) => {
   const removeFile = useOptimisticRemoveFile();
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
@@ -119,10 +121,15 @@ export const FileTooltip: React.FC<FileTooltipProps> = ({
     }
   };
 
+  React.useEffect(() => {
+    setTooltipOpen?.(true);
+    return () => setTooltipOpen?.(false);
+  }, [setTooltipOpen]);
+
   return (
     <>
       <div className="absolute left-1/2 -translate-x-1/2 -top-1 -translate-y-full pointer-events-auto flex flex-col items-center animate-popIn">
-        <div className="bg-white rounded-lg shadow-lg p-3 border text-sm w-[280px]">
+        <div className="bg-red-500 rounded-lg shadow-lg p-3 border text-sm w-[280px]">
           <div className="flex flex-col">
             {uploadState.kind === "uploaded" && (
               <FilePreview type={type} url={uploadState.url} />
